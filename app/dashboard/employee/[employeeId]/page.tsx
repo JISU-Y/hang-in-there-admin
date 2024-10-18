@@ -1,4 +1,4 @@
-import { EmployeeViewPage } from '@/sections/employee/views';
+import { EmployeeViewPage } from '@domains/employee/views';
 
 export const metadata = {
   title: 'Dashboard : Employee View'

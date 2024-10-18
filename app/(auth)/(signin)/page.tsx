@@ -1,4 +1,4 @@
-import { SignInViewPage } from '@/sections/auth/view';
+import { SignInViewPage } from '@domains/auth/view';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

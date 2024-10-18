@@ -1,4 +1,4 @@
-import { KanbanViewPage } from '@/sections/kanban/view';
+import { KanbanViewPage } from '@domains/kanban/view';
 
 export const metadata = {
   title: 'Dashboard : Kanban view'

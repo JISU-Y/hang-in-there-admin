@@ -1,5 +1,5 @@
-import { searchParamsCache } from '@/lib/searchparams';
-import { ProductListingPage } from '@/sections/product/view';
+import { searchParamsCache } from '@logics/utils/searchparams';
+import { ProductListingPage } from '@domains/product/view';
 import { SearchParams } from 'nuqs/parsers';
 
 type pageProps = {
