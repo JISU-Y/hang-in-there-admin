@@ -4,7 +4,6 @@ import { Icons } from '@domains/common/components/icons';
 import { useBreakpoint } from '@logics/hooks/useBreakPoints';
 import { useSidebar } from '@logics/hooks/useSidebar';
 import { cn } from '@logics/utils/utils';
-import { NavItem } from '@types';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -22,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from './ui/tooltip';
+import { NavItem } from '../types';
 
 interface DashboardNavProps {
   items: NavItem[];
