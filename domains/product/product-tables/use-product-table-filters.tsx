@@ -1,6 +1,6 @@
 'use client';
 
-import { searchParams } from '@logics/utils/searchparams';
+import { searchParams } from '@logics/utils/search-params';
 import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 

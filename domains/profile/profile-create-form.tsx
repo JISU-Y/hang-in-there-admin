@@ -27,7 +27,7 @@ import { Separator } from '@domains/common/components/ui/separator';
 import {
   profileSchema,
   type ProfileFormValues
-} from '@logics/utils/form-schema';
+} from '@domains/profile/constants/formSchema';
 import { cn } from '@logics/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertTriangleIcon, Trash, Trash2Icon } from 'lucide-react';

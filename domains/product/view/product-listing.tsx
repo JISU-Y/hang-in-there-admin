@@ -6,7 +6,7 @@ import { Heading } from '@domains/common/components/ui/heading';
 import { Separator } from '@domains/common/components/ui/separator';
 import { Product } from '@domains/common/constants/data';
 import { fakeProducts } from '@domains/common/constants/mock-api';
-import { searchParamsCache } from '@logics/utils/searchparams';
+import { searchParamsCache } from '@logics/utils/search-params';
 import { cn } from '@logics/utils/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';

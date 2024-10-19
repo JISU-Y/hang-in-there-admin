@@ -4,7 +4,7 @@ import {
   CardContent,
   CardHeader
 } from '@domains/common/components/ui/card';
-import { Task } from '@logics/utils/store';
+import { Task } from '@logics/store';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cva } from 'class-variance-authority';

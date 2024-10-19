@@ -1,4 +1,4 @@
-import { searchParamsCache } from '@logics/utils/searchparams';
+import { searchParamsCache } from '@logics/utils/search-params';
 import { EmployeeListingPage } from '@domains/employee/views';
 import { SearchParams } from 'nuqs/parsers';
 import React from 'react';

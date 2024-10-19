@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger
 } from '@domains/common/components/ui/dropdown-menu';
 import { useToast } from '@domains/common/components/ui/use-toast';
-import { useTaskStore } from '@logics/utils/store';
+import { useTaskStore } from '@logics/store';
 import { UniqueIdentifier } from '@dnd-kit/core';
 import { Input } from '@domains/common/components/ui/input';
 
