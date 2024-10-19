@@ -1,1 +1,1 @@
-export { default as SignInViewPage } from './sigin-view';
+export { default as SignInViewPage } from './SignInViewPage';

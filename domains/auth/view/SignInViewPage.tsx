@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import UserAuthForm from '../user-auth-form';
+import UserAuthForm from '../UserAuthForm';
 import { buttonVariants } from '@domains/common/components/ui/button';
 import { cn } from '@logics/utils/utils';
 

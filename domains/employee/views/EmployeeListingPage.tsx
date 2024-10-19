@@ -1,4 +1,4 @@
-import { Breadcrumbs } from '@domains/common/components/Bread-crumbs';
+import { Breadcrumbs } from '@domains/common/components/BreadcrumbLinks';
 import PageContainer from '@domains/common/components/layout/page-container';
 import EmployeeTable from '../components/EmployeeTable/EmployeeTable';
 import { buttonVariants } from '@domains/common/components/ui/button';
