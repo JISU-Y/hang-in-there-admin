@@ -1,4 +1,4 @@
-import Providers from '@logics/providers/providers';
+import Providers from '@logics/providers';
 import { Toaster } from '@domains/common/components/ui/toaster';
 import '@uploadthing/react/styles.css';
 import type { Metadata } from 'next';

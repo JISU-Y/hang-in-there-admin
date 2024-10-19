@@ -1,6 +1,6 @@
 import { Breadcrumbs } from '@domains/common/components/BreadcrumbLinks';
 import { ScrollArea } from '@domains/common/components/ui/scroll-area';
-import EmployeeForm from '../employee-form';
+import EmployeeForm from '../components/EmployeeForm';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },

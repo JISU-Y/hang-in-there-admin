@@ -1,7 +1,7 @@
 import { AreaGraph } from '../AreaGraph';
 import { BarGraph } from '../BarGraph';
 import { PieGraph } from '../PieGraph';
-import { CalendarDateRangePicker } from '@domains/common/components/date-range-picker';
+import { CalendarDateRangePicker } from '@domains/common/components/CalendarDateRangePicker';
 import PageContainer from '@domains/common/components/layout/page-container';
 import { RecentSales } from '../RecentSales';
 import { Button } from '@domains/common/components/ui/button';

@@ -29,7 +29,7 @@ import {
   CardTitle,
   CardContent
 } from '@domains/common/components/ui/card';
-import { FileUploader } from '@domains/common/components/file-uploader';
+import { FileUploader } from '@domains/common/components/FileUploader';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
