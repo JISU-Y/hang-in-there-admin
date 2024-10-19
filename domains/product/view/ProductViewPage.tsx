@@ -1,4 +1,4 @@
-import { Breadcrumbs } from '@domains/common/components/Breadcrumbs';
+import { Breadcrumbs } from '@domains/common/components/Bread-crumbs';
 import { ScrollArea } from '@domains/common/components/ui/scroll-area';
 import React from 'react';
 import ProductForm from '../product-form';

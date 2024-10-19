@@ -1,4 +1,4 @@
-import { Breadcrumbs } from '@domains/common/components/Breadcrumbs';
+import { Breadcrumbs } from '@domains/common/components/Bread-crumbs';
 import ProfileCreateForm from '../components/ProfileCreateForm';
 import PageContainer from '@domains/common/components/layout/page-container';
 
