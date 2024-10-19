@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { Button } from '@domains/common/components/ui/button';
 import { Progress } from '@domains/common/components/ui/progress';
 import { ScrollArea } from '@domains/common/components/ui/scroll-area';
-import { useControllableState } from '@logics/hooks/use-controllable-state';
+import { useControllableState } from '@logics/hooks/useControllableState';
 import { cn, formatBytes } from '@logics/utils/utils';
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {

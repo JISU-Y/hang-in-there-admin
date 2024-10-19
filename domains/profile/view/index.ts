@@ -1,1 +1,1 @@
-export { default as ProfileViewPage } from './profile-view-page';
+export { default as ProfileViewPage } from './ProfileViewPage';

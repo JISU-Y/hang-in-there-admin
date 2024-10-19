@@ -1,5 +1,5 @@
 'use client';
-import { DashboardNav } from '@domains/common/components/dashboard-nav';
+import { DashboardNav } from '@domains/common/components/DashboardNav';
 import {
   Sheet,
   SheetContent,

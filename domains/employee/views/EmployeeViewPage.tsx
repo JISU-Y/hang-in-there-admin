@@ -1,4 +1,4 @@
-import { Breadcrumbs } from '@domains/common/components/breadcrumbs';
+import { Breadcrumbs } from '@domains/common/components/Breadcrumbs';
 import { ScrollArea } from '@domains/common/components/ui/scroll-area';
 import EmployeeForm from '../employee-form';
 

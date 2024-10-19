@@ -8,8 +8,8 @@ import { Product } from '@domains/common/constants/data';
 import {
   CATEGORY_OPTIONS,
   useProductTableFilters
-} from './use-product-table-filters';
-import { columns } from './columns';
+} from '../../hooks/useProductTableFilters';
+import { columns } from '../../constants/tableColumns';
 
 export default function ProductTable({
   data,

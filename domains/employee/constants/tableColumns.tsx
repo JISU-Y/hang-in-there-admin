@@ -2,7 +2,7 @@
 import { Checkbox } from '@domains/common/components/ui/checkbox';
 import { Employee } from '@domains/common/constants/data';
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
+import { CellAction } from '../components/EmployeeTable/CellAction';
 
 export const columns: ColumnDef<Employee>[] = [
   {

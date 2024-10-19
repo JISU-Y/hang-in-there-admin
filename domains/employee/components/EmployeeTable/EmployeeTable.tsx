@@ -5,11 +5,11 @@ import { DataTableFilterBox } from '@domains/common/components/ui/table/data-tab
 import { DataTableResetFilter } from '@domains/common/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@domains/common/components/ui/table/data-table-search';
 import { Employee } from '@domains/common/constants/data';
-import { columns } from '../employee-tables/columns';
+import { columns } from '../../constants/tableColumns';
 import {
   GENDER_OPTIONS,
   useEmployeeTableFilters
-} from './use-employee-table-filters';
+} from '../../hooks/useEmployeeTableFilters';
 
 export default function EmployeeTable({
   data,

@@ -1,4 +1,4 @@
-import { DashboardNav } from '@domains/common/components/dashboard-nav';
+import { DashboardNav } from '@domains/common/components/DashboardNav';
 import { navItems } from '@domains/common/constants/data';
 import { cn } from '@logics/utils/utils';
 

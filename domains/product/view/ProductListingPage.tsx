@@ -1,12 +1,12 @@
-import { Breadcrumbs } from '@domains/common/components/breadcrumbs';
+import { Breadcrumbs } from '@domains/common/components/Breadcrumbs';
 import PageContainer from '@domains/common/components/layout/page-container';
-import ProductTable from '../product-tables';
+import ProductTable from '../components/ProductTable/ProductTable';
 import { buttonVariants } from '@domains/common/components/ui/button';
 import { Heading } from '@domains/common/components/ui/heading';
 import { Separator } from '@domains/common/components/ui/separator';
 import { Product } from '@domains/common/constants/data';
 import { fakeProducts } from '@domains/common/constants/mock-api';
-import { searchParamsCache } from '@logics/utils/search-params';
+import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
 import { cn } from '@logics/utils/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';

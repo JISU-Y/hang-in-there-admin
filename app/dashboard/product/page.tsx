@@ -1,4 +1,4 @@
-import { searchParamsCache } from '@logics/utils/search-params';
+import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
 import { ProductListingPage } from '@domains/product/view';
 import { SearchParams } from 'nuqs/parsers';
 

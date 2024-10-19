@@ -2,7 +2,7 @@
 import { Product } from '@domains/common/constants/data';
 import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
-import { CellAction } from './cell-action';
+import { CellAction } from '../components/ProductTable/CellAction';
 
 export const columns: ColumnDef<Product>[] = [
   {

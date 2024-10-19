@@ -1,5 +1,5 @@
-import { Breadcrumbs } from '@domains/common/components/breadcrumbs';
-import ProfileCreateForm from '../profile-create-form';
+import { Breadcrumbs } from '@domains/common/components/Breadcrumbs';
+import ProfileCreateForm from '../components/ProfileCreateForm';
 import PageContainer from '@domains/common/components/layout/page-container';
 
 const breadcrumbItems = [

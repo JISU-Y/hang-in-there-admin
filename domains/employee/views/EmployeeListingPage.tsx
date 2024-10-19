@@ -1,12 +1,12 @@
-import { Breadcrumbs } from '@domains/common/components/breadcrumbs';
+import { Breadcrumbs } from '@domains/common/components/Breadcrumbs';
 import PageContainer from '@domains/common/components/layout/page-container';
-import EmployeeTable from '../employee-tables';
+import EmployeeTable from '../components/EmployeeTable/EmployeeTable';
 import { buttonVariants } from '@domains/common/components/ui/button';
 import { Heading } from '@domains/common/components/ui/heading';
 import { Separator } from '@domains/common/components/ui/separator';
 import { Employee } from '@domains/common/constants/data';
 import { fakeUsers } from '@domains/common/constants/mock-api';
-import { searchParamsCache } from '@logics/utils/search-params';
+import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
 import { cn } from '@logics/utils/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
