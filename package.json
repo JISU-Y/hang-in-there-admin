@@ -12,7 +12,8 @@
     "start": "next start -p 8080",
     "lint": "next lint",
     "format": "prettier . --write",
-    "prepare": "husky"
+    "prepare": "husky",
+    "release": "git switch develop && git pull origin develop && git switch main && git merge develop && git push origin main"
   },
   "lint-staged": {
     "**/*": [
