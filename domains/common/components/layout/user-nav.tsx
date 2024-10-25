@@ -15,9 +15,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@domains/common/components/ui/dropdown-menu';
-import { signOut, useSession } from 'next-auth/react';
+
 export function UserNav() {
-  const { data: session } = useSession();
+  const session = {
+    user: {
+      image: '',
+      name: '',
+      email: ''
+    }
+  };
   if (session) {
     return (
       <DropdownMenu>
@@ -60,7 +66,7 @@ export function UserNav() {
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuItem>
             Log out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>

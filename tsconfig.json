@@ -23,6 +23,7 @@
       "@domains/*": ["./domains/*"],
       "@styles/*": ["./styles/*"],
       "@logics/*": ["./logics/*"],
+      "@models/*": ["./models/*"],
       "@types/*": ["./types/*"]
     }
   },
