@@ -24,25 +24,21 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'first_name',
-    header: 'NAME'
+    accessorKey: 'name',
+    header: '이름'
   },
   {
-    accessorKey: 'country',
-    header: 'COUNTRY'
+    accessorKey: 'id',
+    header: '로그인 아이디'
   },
   {
-    accessorKey: 'email',
-    header: 'EMAIL'
+    accessorKey: 'join_dt',
+    header: '가입 날짜'
   },
-  {
-    accessorKey: 'job',
-    header: 'COMPANY'
-  },
-  {
-    accessorKey: 'gender',
-    header: 'GENDER'
-  },
+  // {
+  //   accessorKey: 'member_id',
+  //   header: '멤버 아이디'
+  // },
   {
     id: 'actions',
     cell: ({ row }) => <CellAction data={row.original} />

@@ -25,6 +25,7 @@ export interface ApiPaginationDataResponseType<T> {
   pagination: PaginationType;
   message: string;
   timeStamp: string;
+  statusCode: number;
 }
 
 export type UseQueryOptionsType<T = void> = Omit<

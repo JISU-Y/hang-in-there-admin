@@ -40,6 +40,6 @@ const useAdminStore = create(
   )
 );
 
-export const adminStoreStorage = useAdminStore.persist;
+export const adminStoreStorage = useAdminStore.persist || {}; // HACK: persist가 undefined가 되는 경우가 있어 destructure 사용 시 에러 없도록 fallback 추가
 
 export default useAdminStore;

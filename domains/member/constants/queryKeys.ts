@@ -4,5 +4,10 @@ export const memberQueryKeys = {
     ...memberQueryKeys.all,
     'CHECK_ID',
     { options }
+  ],
+  memberList: (options?: object) => [
+    ...memberQueryKeys.all,
+    'MEMBER_LIST',
+    { options }
   ]
 };

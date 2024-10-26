@@ -4,12 +4,19 @@ import MemberTable from '../components/MemberTable/MemberTable';
 import { buttonVariants } from '@domains/common/components/ui/button';
 import { Heading } from '@domains/common/components/ui/heading';
 import { Separator } from '@domains/common/components/ui/separator';
-import { fakeUsers } from '@domains/common/constants/mock-api';
 import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
 import { cn } from '@logics/utils/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
+import { Suspense } from 'react';
+import { getDehydratedQuery, Hydrate } from '@logics/utils/reactQuery';
+import { memberQueryKeys } from '../constants/queryKeys';
+import { getMemberList } from '../netwrok/memberFetchHandler';
+import axios from 'axios';
+import { getAccessToken } from '@domains/auth/utils/authTokenHandler';
+import { cookies } from 'next/headers';
+import { COOKIE_KEY } from '@domains/common/constants/storageKeys';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: NAVIGATION_ROUTE.DASHBOARD.HREF },
@@ -23,19 +30,23 @@ export default async function MemberListingPage({}: MemberListingPageProps) {
   const page = searchParamsCache.get('page');
   const search = searchParamsCache.get('q');
   const gender = searchParamsCache.get('gender');
-  const pageLimit = searchParamsCache.get('limit');
+  const size = searchParamsCache.get('limit');
 
+  // TODO: memberList에 query 붙으면 사용
   const filters = {
     page,
-    limit: pageLimit,
+    limit: size,
     ...(search && { search }),
     ...(gender && { genders: gender })
   };
 
-  // mock api call
-  const data = await fakeUsers.getUsers(filters);
-  const totalUsers = data.total_users;
-  const employee = [];
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get(COOKIE_KEY.ACCESS_TOKEN)?.value;
+
+  const memberListQuery = await getDehydratedQuery({
+    queryKey: memberQueryKeys.memberList({ page, size }),
+    queryFn: async () => await getMemberList({ page, size }, accessToken)
+  });
 
   return (
     <PageContainer scrollable>
@@ -44,7 +55,7 @@ export default async function MemberListingPage({}: MemberListingPageProps) {
 
         <div className="flex items-start justify-between">
           <Heading
-            title={`Employee (${totalUsers})`}
+            title={`Member `}
             description="Manage employees (Server side table functionalities.)"
           />
 
@@ -56,7 +67,14 @@ export default async function MemberListingPage({}: MemberListingPageProps) {
           </Link>
         </div>
         <Separator />
-        <MemberTable data={employee} totalData={totalUsers} />
+        <Suspense fallback={<div>fallback</div>}>
+          <Hydrate state={{ queries: [memberListQuery] }}>
+            <MemberTable
+              data={memberListQuery?.state.data?.data || []}
+              totalData={memberListQuery?.state.data?.data.length || 0}
+            />
+          </Hydrate>
+        </Suspense>
       </div>
     </PageContainer>
   );

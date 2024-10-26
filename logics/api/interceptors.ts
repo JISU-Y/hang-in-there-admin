@@ -87,11 +87,13 @@ export function setupInterceptors(instance: AxiosInstance) {
               // NOTE: 토큰 재발급 실패 시, 로그아웃 처리
               removeAuthTokens();
 
-              window.location.href = '/';
+              if (window) {
+                window.location.href = '/';
 
-              alert(
-                '일정시간 동안 로그인하지 않아 로그아웃되었습니다. 다시 로그인해주세요.'
-              );
+                alert(
+                  '일정시간 동안 로그인하지 않아 로그아웃되었습니다. 다시 로그인해주세요.'
+                );
+              }
 
               processQueue(err, null);
 

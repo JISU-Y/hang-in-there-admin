@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import BaseApi from '@logics/api/baseApi';
 import { ApiDataResponseType } from '@models/client';
-// import { GetLoginDto, LoginType } from '@models/index';
+import { GetLoginDto, LoginType } from '@models/index';
 
 const authApi = new BaseApi('');
 

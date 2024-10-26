@@ -1,25 +1,20 @@
 'use client';
 
 import { DataTable } from '@domains/common/components/ui/table/data-table';
-import { DataTableFilterBox } from '@domains/common/components/ui/table/data-table-filter-box';
 import { DataTableResetFilter } from '@domains/common/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@domains/common/components/ui/table/data-table-search';
 import { columns } from '../../constants/tableColumns';
-import {
-  GENDER_OPTIONS,
-  useMemberTableFilters
-} from '../../hooks/useMemberTableFilters';
+import { useMemberTableFilters } from '../../hooks/useMemberTableFilters';
+import { MemberDto } from '@models/index';
 
 export default function MemberTable({
   data,
   totalData
 }: {
-  data: any[];
+  data: MemberDto[];
   totalData: number;
 }) {
   const {
-    genderFilter,
-    setGenderFilter,
     isAnyFilterActive,
     resetFilters,
     searchQuery,
@@ -35,13 +30,6 @@ export default function MemberTable({
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setPage={setPage}
-        />
-        <DataTableFilterBox
-          filterKey="gender"
-          title="Gender"
-          options={GENDER_OPTIONS}
-          setFilterValue={setGenderFilter}
-          filterValue={genderFilter}
         />
         <DataTableResetFilter
           isFilterActive={isAnyFilterActive}
