@@ -9,3 +9,9 @@ interface LoginType {
   id: string;
   name: string;
 }
+
+interface CreateMemberDto {
+  id: string;
+  pw: string;
+  name: string;
+}

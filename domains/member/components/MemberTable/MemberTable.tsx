@@ -4,7 +4,6 @@ import { DataTable } from '@domains/common/components/ui/table/data-table';
 import { DataTableFilterBox } from '@domains/common/components/ui/table/data-table-filter-box';
 import { DataTableResetFilter } from '@domains/common/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@domains/common/components/ui/table/data-table-search';
-import { Employee } from '@domains/common/constants/data';
 import { columns } from '../../constants/tableColumns';
 import {
   GENDER_OPTIONS,
@@ -15,7 +14,7 @@ export default function MemberTable({
   data,
   totalData
 }: {
-  data: Employee[];
+  data: any[];
   totalData: number;
 }) {
   const {

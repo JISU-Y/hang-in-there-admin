@@ -1,9 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Button } from '@domains/common/components/ui/button';
 import {
   Form,
@@ -15,56 +13,93 @@ import {
 } from '@domains/common/components/ui/form';
 import { Input } from '@domains/common/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@domains/common/components/ui/select';
-import {
-  RadioGroup,
-  RadioGroupItem
-} from '@domains/common/components/ui/radio-group';
-import {
   Card,
   CardHeader,
   CardTitle,
   CardContent
 } from '@domains/common/components/ui/card';
-
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Name must be at least 2 characters.'
-  }),
-  country: z.string({
-    required_error: 'Please select a country.'
-  }),
-  email: z.string().email({
-    message: 'Please enter a valid email address.'
-  }),
-  company: z.string().min(1, {
-    message: 'Company name is required.'
-  }),
-  gender: z.enum(['male', 'female', 'other'], {
-    required_error: 'Please select a gender.'
-  })
-});
+import { memberFormSchema } from '../constants/formSchema';
+import { MemberFormSchemaType } from '../types';
+import { useFetchMemberIdCheck } from '../netwrok/memberQueries';
+import { useEffect, useState } from 'react';
+import { useCreateMember } from '../netwrok/memberMutations';
+import { useRouter } from 'next/navigation';
+import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
 
 export default function MemberForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { replace } = useRouter();
+
+  const [idCheckCompleted, setIdCheckCompleted] = useState(false);
+
+  const form = useForm<MemberFormSchemaType>({
+    resolver: zodResolver(memberFormSchema),
     defaultValues: {
-      name: '',
-      country: '',
-      email: '',
-      company: '',
-      gender: undefined
+      id: '',
+      pw: '',
+      name: ''
     }
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const idToBeRegistered = form.watch('id');
+
+  const { refetch: fetchCheckMemberId, isLoading: isCheckingMemberId } =
+    useFetchMemberIdCheck(idToBeRegistered, {
+      enabled: false
+    });
+  const { mutateAsync: createMember } = useCreateMember();
+
+  const handleCheckIdDuplicate = async () => {
+    if (isCheckingMemberId) return;
+
+    try {
+      const { data } = await fetchCheckMemberId();
+
+      switch (data?.statusCode) {
+        case 1001:
+          setIdCheckCompleted(false);
+          form.setError('id', {
+            message: data.message
+          });
+          break;
+        case 1002:
+          setIdCheckCompleted(true);
+          form.setError('id', {
+            message: data.message
+          });
+          break;
+      }
+    } catch (error) {
+      setIdCheckCompleted(false);
+      form.setError('id', {
+        message: 'id 체크에 실패했습니다. 다시 시도해주세요.'
+      });
+    }
+  };
+
+  const onSubmit: SubmitHandler<MemberFormSchemaType> = async (data) => {
+    if (!idCheckCompleted) {
+      form.setError('id', {
+        message: 'id 중복체크를 해주세요.'
+      });
+
+      return;
+    }
+
+    try {
+      await createMember(data);
+
+      replace(NAVIGATION_ROUTE.MEMBER.HREF);
+      // TODO: member list refetch
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (idToBeRegistered) {
+      setIdCheckCompleted(false);
+    }
+  }, [idToBeRegistered]);
 
   return (
     <Card className="mx-auto w-full">
@@ -76,115 +111,58 @@ export default function MemberForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a country" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="usa">USA</SelectItem>
-                        <SelectItem value="uk">UK</SelectItem>
-                        <SelectItem value="canada">Canada</SelectItem>
-                        <SelectItem value="australia">Australia</SelectItem>
-                        <SelectItem value="germany">Germany</SelectItem>
-                        <SelectItem value="france">France</SelectItem>
-                        <SelectItem value="japan">Japan</SelectItem>
-                        <SelectItem value="brazil">Brazil</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="company"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Company</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your company" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
             <FormField
               control={form.control}
-              name="gender"
+              name="id"
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Gender</FormLabel>
+                <FormItem>
+                  <FormLabel>아이디</FormLabel>
                   <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      className="flex space-x-4"
-                    >
-                      <FormItem className="flex items-center space-x-2">
-                        <FormControl>
-                          <RadioGroupItem value="male" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Male</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2">
-                        <FormControl>
-                          <RadioGroupItem value="female" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Female</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2">
-                        <FormControl>
-                          <RadioGroupItem value="other" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Other</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
+                    <div className="flex h-full w-full flex-row items-end gap-2">
+                      <Input placeholder="아이디" {...field} />
+                      <Button
+                        type="button"
+                        className="whitespace-nowrap"
+                        variant="outline"
+                        disabled={idCheckCompleted || isCheckingMemberId}
+                        onClick={handleCheckIdDuplicate}
+                      >
+                        중복확인
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+
+            <FormField
+              control={form.control}
+              name="pw"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="비밀번호" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>이름</FormLabel>
+                  <FormControl>
+                    <Input placeholder="이름" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">관리자 추가하기</Button>
           </form>
         </Form>
       </CardContent>

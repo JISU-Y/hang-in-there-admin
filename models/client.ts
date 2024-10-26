@@ -1,4 +1,6 @@
-export interface ApiDataResponseType<T> {
+import { UseQueryOptions } from '@tanstack/react-query';
+
+export interface ApiDataResponseType<T = void> {
   data: T;
   message: string;
   timeStamp: string;
@@ -24,3 +26,8 @@ export interface ApiPaginationDataResponseType<T> {
   message: string;
   timeStamp: string;
 }
+
+export type UseQueryOptionsType<T = void> = Omit<
+  UseQueryOptions<T>,
+  'queryKey' | 'queryFn'
+>;
