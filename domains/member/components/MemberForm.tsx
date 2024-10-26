@@ -50,7 +50,7 @@ const formSchema = z.object({
   })
 });
 
-export default function EmployeeForm() {
+export default function MemberForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

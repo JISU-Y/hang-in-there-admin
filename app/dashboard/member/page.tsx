@@ -1,5 +1,5 @@
 import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
-import { EmployeeListingPage } from '@domains/employee/views';
+import { MemberListingPage } from '@domains/member/views';
 import { SearchParams } from 'nuqs/parsers';
 import React from 'react';
 
@@ -8,12 +8,12 @@ type pageProps = {
 };
 
 export const metadata = {
-  title: 'Dashboard : Employees'
+  title: 'Dashboard : Members'
 };
 
 export default async function Page({ searchParams }: pageProps) {
   // Allow nested RSCs to access the search params (in a type-safe way)
   searchParamsCache.parse(searchParams);
 
-  return <EmployeeListingPage />;
+  return <MemberListingPage />;
 }

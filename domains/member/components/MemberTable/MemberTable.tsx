@@ -8,10 +8,10 @@ import { Employee } from '@domains/common/constants/data';
 import { columns } from '../../constants/tableColumns';
 import {
   GENDER_OPTIONS,
-  useEmployeeTableFilters
-} from '../../hooks/useEmployeeTableFilters';
+  useMemberTableFilters
+} from '../../hooks/useMemberTableFilters';
 
-export default function EmployeeTable({
+export default function MemberTable({
   data,
   totalData
 }: {
@@ -26,7 +26,7 @@ export default function EmployeeTable({
     searchQuery,
     setPage,
     setSearchQuery
-  } = useEmployeeTableFilters();
+  } = useMemberTableFilters();
 
   return (
     <div className="space-y-4 ">
