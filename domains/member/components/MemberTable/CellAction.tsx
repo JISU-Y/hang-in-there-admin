@@ -8,13 +8,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@domains/common/components/ui/dropdown-menu';
-import { Employee } from '@domains/common/constants/data';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 interface CellActionProps {
-  data: Employee;
+  data: any;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {

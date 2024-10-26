@@ -1,9 +1,5 @@
 'use client';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage
-} from '@domains/common/components/ui/avatar';
+import { useAuthSession } from '@domains/auth/hooks/useAuthSession';
 import { Button } from '@domains/common/components/ui/button';
 import {
   DropdownMenu,
@@ -17,36 +13,20 @@ import {
 } from '@domains/common/components/ui/dropdown-menu';
 
 export function UserNav() {
-  const session = {
-    user: {
-      image: '',
-      name: '',
-      email: ''
-    }
-  };
-  if (session) {
+  const { member, logout } = useAuthSession();
+
+  if (member) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={session.user?.image ?? ''}
-                alt={session.user?.name ?? ''}
-              />
-              <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
-            </Avatar>
+          <Button variant="ghost" className="relative h-8 rounded-sm">
+            <span className="text-orange-300">{member.name}</span>님
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">
-                {session.user?.name}
-              </p>
-              <p className="text-xs leading-none text-muted-foreground">
-                {session.user?.email}
-              </p>
+              <p className="text-sm font-medium leading-none">{member.name}</p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -66,7 +46,7 @@ export function UserNav() {
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={logout}>
             Log out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>

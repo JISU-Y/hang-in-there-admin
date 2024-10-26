@@ -1,7 +1,7 @@
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { OptionsType } from 'cookies-next/lib/types';
 
-import { COOKIE_KEY } from '@domains/common/constants/cookieKeys';
+import { COOKIE_KEY } from '@domains/common/constants/storageKeys';
 
 export const removeAuthData = () => {
   Object.values(COOKIE_KEY).forEach((key) => {

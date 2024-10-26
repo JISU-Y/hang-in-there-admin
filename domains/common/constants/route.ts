@@ -18,5 +18,20 @@ export const NAVIGATION_ROUTE = {
     HREF: '/dashboard',
     PATHNAME: '/dashboard',
     QUERY: {}
+  },
+  MEMBER: {
+    HREF: '/dashboard/member',
+    PATHNAME: '/dashboard/member',
+    QUERY: {}
+  },
+  MEMBER_CREATE: {
+    HREF: '/dashboard/member/create',
+    PATHNAME: '/dashboard/member/create',
+    QUERY: {}
+  },
+  MEMBER_DETAIL: {
+    HREF: '/dashboard/member',
+    PATHNAME: '/dashboard/member/[memberId]',
+    QUERY: {}
   }
 } as const;

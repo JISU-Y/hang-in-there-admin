@@ -6,3 +6,7 @@ export const COOKIE_KEY = {
   FIRST_LOGIN: 'auth.firstLogin',
   REDIRECT_PATH: 'auth.redirectPath'
 } as const;
+
+export const LOCAL_STORAGE_KEY = {
+  STORE: 'global.store'
+} as const;
