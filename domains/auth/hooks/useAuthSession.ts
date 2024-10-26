@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
+import useAdminStore, { adminStoreStorage } from '@logics/store';
+
 import { getAccessToken, removeAuthTokens } from '../utils/authTokenHandler';
 
 export const useAuthSession = () => {
@@ -10,16 +13,21 @@ export const useAuthSession = () => {
 
   const [token, setToken] = useState('');
 
+  const { member, resetMember } = useAdminStore((store) => store);
+  const { clearStorage: clearAdminStore } = adminStoreStorage;
+
   const logout = () => {
     setToken('');
     removeAuthTokens();
-    push('/');
+    resetMember();
+    clearAdminStore();
+    push(NAVIGATION_ROUTE.SIGN_IN.HREF);
   };
 
   const guardRoute = useCallback(
     (callback: () => void) => {
       if (!token) {
-        push('/');
+        push(NAVIGATION_ROUTE.DASHBOARD.HREF);
 
         return;
       }
@@ -42,6 +50,7 @@ export const useAuthSession = () => {
   }, []);
 
   return {
+    member,
     isUserLoggedIn: !!token,
     logout,
     guardRoute

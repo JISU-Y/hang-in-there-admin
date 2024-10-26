@@ -19,6 +19,7 @@ import { signinFormSchema } from '../constants/formSchema';
 import { useCreateMemberLogin } from '../network/authMutations';
 import { setAuthTokens } from '../utils/authTokenHandler';
 import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
+import useAdminStore from '@logics/store';
 
 export default function SignInForm() {
   const { replace } = useRouter();
@@ -26,6 +27,8 @@ export default function SignInForm() {
   const callbackUrl = searchParams.get('callbackUrl');
 
   const { mutateAsync: memberLogin } = useCreateMemberLogin();
+
+  const setAdminMember = useAdminStore(({ setMember }) => setMember);
 
   const [loading, startTransition] = useTransition();
 
@@ -40,11 +43,15 @@ export default function SignInForm() {
   const onSubmit: SubmitHandler<SigninFormSchemaType> = async (data) => {
     startTransition(async () => {
       try {
-        const tokenData = await memberLogin(data);
+        const loginData = await memberLogin(data);
 
         setAuthTokens({
-          accessToken: tokenData.at,
-          refreshToken: tokenData.rt
+          accessToken: loginData.at,
+          refreshToken: loginData.rt
+        });
+
+        setAdminMember({
+          name: loginData.name
         });
 
         replace(NAVIGATION_ROUTE.DASHBOARD.HREF);

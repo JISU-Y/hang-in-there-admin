@@ -1,27 +1,45 @@
 import { create } from 'zustand';
-import { v4 as uuid } from 'uuid';
 import { persist } from 'zustand/middleware';
-import { UniqueIdentifier } from '@dnd-kit/core';
+
+import { LOCAL_STORAGE_KEY } from '@domains/common/constants/storageKeys';
 
 export type Status = 'TODO' | 'IN_PROGRESS' | 'DONE';
 
-export type Task = {
-  id: string;
-  title: string;
-  description?: string;
-  status: Status;
+export interface MemberType {
+  name: string;
+}
+
+export interface State {
+  member: MemberType;
+}
+
+export interface Actions {
+  setMember: (member: Partial<MemberType>) => void;
+  resetMember: () => void;
+}
+
+export type StoreType = State & Actions;
+
+const initialState = {
+  member: {
+    name: ''
+  }
 };
 
-export type State = {
-  tasks: Task[];
-  draggedTask: string | null;
-};
+const useAdminStore = create(
+  persist<StoreType>(
+    (set) => ({
+      member: initialState.member,
+      setMember: (newMember) =>
+        set(({ member }) => ({ member: { ...member, ...newMember } })),
+      resetMember: () => set(() => ({ member: initialState.member }))
+    }),
+    {
+      name: LOCAL_STORAGE_KEY.STORE
+    }
+  )
+);
 
-export type Actions = {
-  addTask: (title: string, description?: string) => void;
-  addCol: (title: string) => void;
-  dragTask: (id: string | null) => void;
-  removeTask: (title: string) => void;
-  removeCol: (id: UniqueIdentifier) => void;
-  updateCol: (id: UniqueIdentifier, newName: string) => void;
-};
+export const adminStoreStorage = useAdminStore.persist;
+
+export default useAdminStore;
