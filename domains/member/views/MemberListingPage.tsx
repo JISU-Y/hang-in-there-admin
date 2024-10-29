@@ -13,8 +13,6 @@ import { Suspense } from 'react';
 import { getDehydratedQuery, Hydrate } from '@logics/utils/reactQuery';
 import { memberQueryKeys } from '../constants/queryKeys';
 import { getMemberList } from '../netwrok/memberFetchHandler';
-import axios from 'axios';
-import { getAccessToken } from '@domains/auth/utils/authTokenHandler';
 import { cookies } from 'next/headers';
 import { COOKIE_KEY } from '@domains/common/constants/storageKeys';
 
@@ -68,7 +66,9 @@ export default async function MemberListingPage({}: MemberListingPageProps) {
         </div>
         <Separator />
         <Suspense fallback={<div>fallback</div>}>
-          <Hydrate state={{ queries: [memberListQuery] }}>
+          <Hydrate
+            state={memberListQuery ? { queries: [memberListQuery] } : undefined}
+          >
             <MemberTable
               data={memberListQuery?.state.data?.data || []}
               totalData={memberListQuery?.state.data?.data.length || 0}

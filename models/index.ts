@@ -22,3 +22,7 @@ export interface MemberDto {
   join_dt: string;
   member_id: string;
 }
+
+export interface UpdatePasswordDto {
+  pw: string;
+}

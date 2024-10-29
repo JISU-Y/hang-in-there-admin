@@ -5,6 +5,7 @@ import {
   removeAuthTokens,
   setAccessToken
 } from '@domains/auth/utils/authTokenHandler';
+import { LOCAL_STORAGE_KEY } from '@domains/common/constants/storageKeys';
 
 // NOTE: 토큰 재발급 요청이 여러개 일 경우, 한번만 요청하도록 처리하기 위한 변수
 let isRefreshing = false;
@@ -66,7 +67,7 @@ export function setupInterceptors(instance: AxiosInstance) {
           // NOTE: 토큰 재발급 요청
           axios
             .post(
-              `${process.env.NEXT_PUBLIC_HANGINTHERE_API_END_POINT}/v1/user/reissue`,
+              `${process.env.NEXT_PUBLIC_HANGINTHERE_API_END_POINT}/v1/admin/reissue`,
               {
                 rt: refreshToken
               }
@@ -87,8 +88,12 @@ export function setupInterceptors(instance: AxiosInstance) {
               // NOTE: 토큰 재발급 실패 시, 로그아웃 처리
               removeAuthTokens();
 
-              if (window) {
-                window.location.href = '/';
+              if (typeof window === 'undefined') {
+                // server side error
+              } else {
+                window.location.href = '/auth/signin';
+
+                localStorage.removeItem(LOCAL_STORAGE_KEY.STORE);
 
                 alert(
                   '일정시간 동안 로그인하지 않아 로그아웃되었습니다. 다시 로그인해주세요.'
