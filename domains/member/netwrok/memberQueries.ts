@@ -9,7 +9,7 @@ import {
 import { MemberDto } from '@models/index';
 import { getMemberList } from './memberFetchHandler';
 
-const memberApi = new BaseApi('/member');
+const memberApi = new BaseApi('member');
 
 export const useFetchMemberIdCheck = (
   id: string,
