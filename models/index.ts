@@ -26,3 +26,20 @@ export interface MemberDto {
 export interface UpdatePasswordDto {
   pw: string;
 }
+
+export interface EventListType {
+  event_id: number;
+  image: string;
+  title: string;
+  event_st: string;
+  event_ed: string;
+  content_type: number;
+  area_cd: number;
+  sigungu_cd: number;
+  category: number;
+  sub_category: number;
+  detail_sub_category: number;
+  reg_dt: string;
+  addr: string;
+  addr_detail: string;
+}
