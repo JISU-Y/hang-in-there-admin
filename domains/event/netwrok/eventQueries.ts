@@ -14,6 +14,7 @@ export const useFetchEventListQuery = (
   return useQuery({
     queryKey: eventQueryKeys.eventList({ params }),
     queryFn: async () => await getEventList(params),
-    ...options
+    ...options,
+    select: ({ data, pagination }) => ({ data, pagination })
   });
 };

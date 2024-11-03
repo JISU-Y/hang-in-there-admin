@@ -1,9 +1,12 @@
 'use client';
-import { Checkbox } from '@domains/common/components/ui/checkbox';
+
 import { ColumnDef } from '@tanstack/react-table';
+import { Checkbox } from '@domains/common/components/ui/checkbox';
+import { EventListType } from '@models/index';
+
 import { CellAction } from '../components/EventTable/CellAction';
 
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<EventListType>[] = [
   {
     id: 'select',
     header: ({ table }) => (

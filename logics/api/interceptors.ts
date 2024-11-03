@@ -7,6 +7,8 @@ import {
 } from '@domains/auth/utils/authTokenHandler';
 import { LOCAL_STORAGE_KEY } from '@domains/common/constants/storageKeys';
 
+// TODO: 서버 요청은 어떻게 처리할지...
+
 // NOTE: 토큰 재발급 요청이 여러개 일 경우, 한번만 요청하도록 처리하기 위한 변수
 let isRefreshing = false;
 let failedQueue: {
@@ -31,7 +33,7 @@ const processQueue = (
 };
 
 // NOTE: BaseApi 클래스에 들어가는 interceptors 설정
-export function setupInterceptors(instance: AxiosInstance) {
+export async function setupInterceptors(instance: AxiosInstance) {
   instance.interceptors.response.use(
     // NOTE: onFulfilled 시 응답 그대로 반환
     (response) => response,
@@ -67,7 +69,7 @@ export function setupInterceptors(instance: AxiosInstance) {
           // NOTE: 토큰 재발급 요청
           axios
             .post(
-              `${process.env.NEXT_PUBLIC_HANGINTHERE_API_END_POINT}/v1/admin/reissue`,
+              `${process.env.NEXT_PUBLIC_HANGINTHERE_API_END_POINT}/v1/admin/member/reissue`,
               {
                 rt: refreshToken
               }

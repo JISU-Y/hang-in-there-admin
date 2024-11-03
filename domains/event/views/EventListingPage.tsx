@@ -1,20 +1,10 @@
 import { Breadcrumbs } from '@domains/common/components/BreadcrumbLinks';
 import PageContainer from '@domains/common/components/layout/page-container';
 import EventTable from '../components/EventTable/EventTable';
-import { buttonVariants } from '@domains/common/components/ui/button';
 import { Heading } from '@domains/common/components/ui/heading';
 import { Separator } from '@domains/common/components/ui/separator';
 import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
-import { cn } from '@logics/utils/utils';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
 import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
-import { Suspense } from 'react';
-import { getDehydratedQuery, Hydrate } from '@logics/utils/reactQuery';
-import { eventQueryKeys } from '../constants/queryKeys';
-import { getEventList } from '../netwrok/eventFetchHandler';
-import { cookies } from 'next/headers';
-import { COOKIE_KEY } from '@domains/common/constants/storageKeys';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: NAVIGATION_ROUTE.DASHBOARD.HREF },
@@ -23,7 +13,7 @@ const breadcrumbItems = [
 
 interface EventListingPageProps {}
 
-export default async function EventListingPage({}: EventListingPageProps) {
+export default function EventListingPage({}: EventListingPageProps) {
   // TODO: event에서는 search query가 중요.
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
@@ -39,13 +29,15 @@ export default async function EventListingPage({}: EventListingPageProps) {
     ...(gender && { genders: gender })
   };
 
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get(COOKIE_KEY.ACCESS_TOKEN)?.value;
-
-  const eventListQuery = await getDehydratedQuery({
-    queryKey: eventQueryKeys.eventList({ page, size }),
-    queryFn: async () => await getEventList({ page, size }, accessToken)
-  });
+  // TODO: server 요청과 client 요청을 나누어야 할 듯.
+  // 혹은 client에서 요청하는 것도 server를 거치게 해서 middleware에서 판단한다든가.
+  // const accessToken = getAccessToken({ cookies });
+  // const refreshToken = getRefreshToken({ cookies });
+  // const eventListQuery = await getDehydratedQuery({
+  //   queryKey: eventQueryKeys.eventList({ page, size }),
+  //   queryFn: async () =>
+  //     await getEventList({ page, size }, { accessToken, refreshToken })
+  // });
 
   return (
     <PageContainer scrollable>
@@ -64,7 +56,9 @@ export default async function EventListingPage({}: EventListingPageProps) {
           </Link> */}
         </div>
         <Separator />
-        <Suspense fallback={<div>fallback</div>}>
+        <EventTable filters={filters} />
+
+        {/* <Suspense fallback={<div>fallback</div>}>
           <Hydrate
             state={eventListQuery ? { queries: [eventListQuery] } : undefined}
           >
@@ -73,7 +67,7 @@ export default async function EventListingPage({}: EventListingPageProps) {
               totalData={eventListQuery?.state.data?.pagination.totalPage || 0}
             />
           </Hydrate>
-        </Suspense>
+        </Suspense> */}
       </div>
     </PageContainer>
   );

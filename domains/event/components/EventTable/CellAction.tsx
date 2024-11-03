@@ -1,4 +1,10 @@
 'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { Edit, MoreHorizontal, Trash } from 'lucide-react';
+
 import { AlertModal } from '@domains/common/components/modal/alert-modal';
 import { Button } from '@domains/common/components/ui/button';
 import {
@@ -8,18 +14,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@domains/common/components/ui/dropdown-menu';
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
+import { EventListType } from '@models/index';
 
 interface CellActionProps {
-  data: any;
+  data: EventListType;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction = ({ data }: CellActionProps) => {
+  const { push } = useRouter();
+
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const router = useRouter();
 
   const onConfirm = async () => {};
 
@@ -42,7 +48,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/user/${data.id}`)}
+            onClick={() =>
+              push(`${NAVIGATION_ROUTE.EVENT_DETAIL.HREF}/${data.event_id}`)
+            }
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

@@ -6,11 +6,15 @@ const eventApi = new BaseApi('event');
 
 export const getEventList = (
   params: { page: number; size: number },
-  token?: string
-) =>
-  eventApi.get<ApiPaginationDataResponseType<EventListType[]>>('', {
+  tokens?: { accessToken?: string; refreshToken?: string }
+) => {
+  return eventApi.get<ApiPaginationDataResponseType<EventListType[]>>('', {
     params,
     headers: {
-      Authorization: `Bearer ${token}`
+      ...(tokens?.accessToken && {
+        Authorization: `Bearer ${tokens.accessToken}`
+      }),
+      ...(tokens?.refreshToken && { refresh: tokens.refreshToken })
     }
   });
+};
