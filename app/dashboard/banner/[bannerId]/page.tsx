@@ -1,4 +1,4 @@
-import { ProductViewPage } from '@domains/product/view';
+import { ProductViewPage } from '@domains/banner/view';
 
 export const metadata = {
   title: 'Dashboard : Product View'

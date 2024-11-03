@@ -4,20 +4,19 @@ import { DataTable } from '@domains/common/components/ui/table/data-table';
 import { DataTableFilterBox } from '@domains/common/components/ui/table/data-table-filter-box';
 import { DataTableResetFilter } from '@domains/common/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@domains/common/components/ui/table/data-table-search';
-import { Product } from '@domains/common/constants/data';
 import {
   CATEGORY_OPTIONS,
   useProductTableFilters
 } from '../../hooks/useProductTableFilters';
 import { columns } from '../../constants/tableColumns';
+import { useFetchBannerListQuery } from '@domains/banner/network/bannerQueries';
+import { GetBannerListRequest } from '@models/index';
 
-export default function ProductTable({
-  data,
-  totalData
-}: {
-  data: Product[];
-  totalData: number;
-}) {
+interface ProductTableProps {
+  filters: GetBannerListRequest;
+}
+
+export default function ProductTable({ filters }: ProductTableProps) {
   const {
     categoriesFilter,
     setCategoriesFilter,
@@ -27,6 +26,8 @@ export default function ProductTable({
     setPage,
     setSearchQuery
   } = useProductTableFilters();
+
+  const { data: bannerList } = useFetchBannerListQuery(filters);
 
   return (
     <div className="space-y-4 ">
@@ -49,7 +50,11 @@ export default function ProductTable({
           onReset={resetFilters}
         />
       </div>
-      <DataTable columns={columns} data={data} totalItems={totalData} />
+      <DataTable
+        columns={columns}
+        data={bannerList?.data || []}
+        totalItems={bannerList?.pagination.totalPage || 0}
+      />
     </div>
   );
 }

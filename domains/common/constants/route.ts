@@ -43,5 +43,15 @@ export const NAVIGATION_ROUTE = {
     HREF: '/dashboard/event',
     PATHNAME: '/dashboard/event/[eventId]',
     QUERY: {}
+  },
+  BANNER: {
+    HREF: '/dashboard/banner',
+    PATHNAME: '/dashboard/banner',
+    QUERY: {}
+  },
+  BANNER_DETAIL: {
+    HREF: '/dashboard/banner',
+    PATHNAME: '/dashboard/banner/[bannerId]',
+    QUERY: {}
   }
 } as const;

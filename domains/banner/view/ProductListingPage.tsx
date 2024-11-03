@@ -4,38 +4,29 @@ import ProductTable from '../components/ProductTable/ProductTable';
 import { buttonVariants } from '@domains/common/components/ui/button';
 import { Heading } from '@domains/common/components/ui/heading';
 import { Separator } from '@domains/common/components/ui/separator';
-import { Product } from '@domains/common/constants/data';
-import { fakeProducts } from '@domains/common/constants/mock-api';
 import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
 import { cn } from '@logics/utils/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import type { SearchParams } from 'nuqs/server';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Products', link: '/dashboard/product' }
+  { title: 'Products', link: '/dashboard/banner' }
 ];
 
-type ProductListingPage = {};
-
-export default async function ProductListingPage({}: ProductListingPage) {
+export default async function BannerListingPage() {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
-  const categories = searchParamsCache.get('categories');
+  const useYn = searchParamsCache.get('useYn');
+  const status = searchParamsCache.get('status');
 
   const filters = {
     page,
-    limit: pageLimit,
-    ...(search && { search }),
-    ...(categories && { categories: categories })
+    size: pageLimit,
+    ...(useYn && { useYn }),
+    ...(status && { status })
   };
-
-  const data = await fakeProducts.getProducts(filters);
-  const totalProducts = data.total_products;
-  const products: Product[] = data.products;
 
   return (
     <PageContainer>
@@ -43,8 +34,8 @@ export default async function ProductListingPage({}: ProductListingPage) {
         <Breadcrumbs items={breadcrumbItems} />
         <div className="flex items-start justify-between">
           <Heading
-            title={`Products (${totalProducts})`}
-            description="Manage products (Server side table functionalities.)"
+            title="배너 리스트"
+            description="배너 리스트를 수정할 수 있습니다."
           />
           <Link
             href={'/dashboard/product/new'}
@@ -54,7 +45,7 @@ export default async function ProductListingPage({}: ProductListingPage) {
           </Link>
         </div>
         <Separator />
-        <ProductTable data={products} totalData={totalProducts} />
+        <ProductTable filters={filters} />
       </div>
     </PageContainer>
   );
