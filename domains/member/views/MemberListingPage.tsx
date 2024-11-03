@@ -9,12 +9,6 @@ import { cn } from '@logics/utils/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
-import { Suspense } from 'react';
-import { getDehydratedQuery, Hydrate } from '@logics/utils/reactQuery';
-import { memberQueryKeys } from '../constants/queryKeys';
-import { getMemberList } from '../netwrok/memberFetchHandler';
-import { cookies } from 'next/headers';
-import { COOKIE_KEY } from '@domains/common/constants/storageKeys';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: NAVIGATION_ROUTE.DASHBOARD.HREF },
@@ -26,25 +20,22 @@ interface MemberListingPageProps {}
 export default async function MemberListingPage({}: MemberListingPageProps) {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
-  const gender = searchParamsCache.get('gender');
   const size = searchParamsCache.get('limit');
+  const search = searchParamsCache.get('q');
 
   // TODO: memberList에 query 붙으면 사용
   const filters = {
     page,
     limit: size,
-    ...(search && { search }),
-    ...(gender && { genders: gender })
+    ...(search && { search })
   };
 
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get(COOKIE_KEY.ACCESS_TOKEN)?.value;
-
-  const memberListQuery = await getDehydratedQuery({
-    queryKey: memberQueryKeys.memberList({ page, size }),
-    queryFn: async () => await getMemberList({ page, size }, accessToken)
-  });
+  // const cookieStore = cookies();
+  // const accessToken = cookieStore.get(COOKIE_KEY.ACCESS_TOKEN)?.value;
+  // const memberListQuery = await getDehydratedQuery({
+  //   queryKey: memberQueryKeys.memberList({ page, size }),
+  //   queryFn: async () => await getMemberList({ page, size }, accessToken)
+  // });
 
   return (
     <PageContainer scrollable>
@@ -65,16 +56,13 @@ export default async function MemberListingPage({}: MemberListingPageProps) {
           </Link>
         </div>
         <Separator />
-        <Suspense fallback={<div>fallback</div>}>
+        <MemberTable filters={filters} />
+        {/* <Suspense fallback={<div>fallback</div>}>
           <Hydrate
             state={memberListQuery ? { queries: [memberListQuery] } : undefined}
           >
-            <MemberTable
-              data={memberListQuery?.state.data?.data || []}
-              totalData={memberListQuery?.state.data?.data.length || 0}
-            />
           </Hydrate>
-        </Suspense>
+        </Suspense> */}
       </div>
     </PageContainer>
   );

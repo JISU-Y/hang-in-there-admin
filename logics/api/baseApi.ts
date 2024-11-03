@@ -1,6 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
-import { getAccessToken } from '@domains/auth/utils/authTokenHandler';
+import {
+  getAccessToken,
+  getRefreshToken
+} from '@domains/auth/utils/authTokenHandler';
 
 import { setupInterceptors } from './interceptors';
 
@@ -24,7 +27,8 @@ export default class BaseApi {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
     this.client = axios.create({
-      baseURL: `${BASE_URL}/${version}/${userType}/${baseUrl}`
+      baseURL: `${BASE_URL}/${version}/${userType}/${baseUrl}`,
+      withCredentials: true
     });
 
     // NOTE: 토큰 재발급 요청을 위한 interceptor 설정
@@ -33,11 +37,13 @@ export default class BaseApi {
 
   addAuthHeader(config: ApiRequestConfig = {}) {
     const authToken = getAccessToken();
+    const refreshToken = getRefreshToken();
     const { isAuthRequired = true, ...axiosConfig } = config;
 
     return {
       ...axiosConfig,
       headers: {
+        ...(refreshToken && { refresh: refreshToken }),
         ...(isAuthRequired && authToken
           ? { Authorization: `Bearer ${authToken}` }
           : {}),

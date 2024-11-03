@@ -5,15 +5,17 @@ import { DataTableResetFilter } from '@domains/common/components/ui/table/data-t
 import { DataTableSearch } from '@domains/common/components/ui/table/data-table-search';
 import { columns } from '../../constants/tableColumns';
 import { useMemberTableFilters } from '../../hooks/useMemberTableFilters';
-import { MemberDto } from '@models/index';
+import { useFetchMemberListQuery } from '@domains/member/netwrok/memberQueries';
 
-export default function MemberTable({
-  data,
-  totalData
-}: {
-  data: MemberDto[];
-  totalData: number;
-}) {
+interface MemberTableProps {
+  filters: {
+    page: number;
+    limit: number;
+    search?: string;
+  };
+}
+
+export default function MemberTable({ filters }: MemberTableProps) {
   const {
     isAnyFilterActive,
     resetFilters,
@@ -21,6 +23,11 @@ export default function MemberTable({
     setPage,
     setSearchQuery
   } = useMemberTableFilters();
+
+  const { data: memberList } = useFetchMemberListQuery({
+    page: filters.page,
+    size: filters.limit
+  });
 
   return (
     <div className="space-y-4 ">
@@ -36,7 +43,11 @@ export default function MemberTable({
           onReset={resetFilters}
         />
       </div>
-      <DataTable columns={columns} data={data} totalItems={totalData} />
+      <DataTable
+        columns={columns}
+        data={memberList?.data || []}
+        totalItems={memberList?.pagination.totalPage || 0}
+      />
     </div>
   );
 }

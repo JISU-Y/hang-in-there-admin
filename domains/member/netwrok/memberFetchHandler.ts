@@ -6,11 +6,14 @@ const memberApi = new BaseApi('member');
 
 export const getMemberList = (
   params: { page: number; size: number },
-  token?: string
+  tokens?: { accessToken?: string; refreshToken?: string }
 ) =>
   memberApi.get<ApiPaginationDataResponseType<MemberDto[]>>('/list', {
     params,
     headers: {
-      Authorization: `Bearer ${token}`
+      ...(tokens?.accessToken && {
+        Authorization: `Bearer ${tokens.accessToken}`
+      }),
+      ...(tokens?.refreshToken && { refresh: tokens.refreshToken })
     }
   });

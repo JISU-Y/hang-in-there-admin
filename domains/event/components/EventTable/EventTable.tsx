@@ -5,15 +5,23 @@ import { DataTableResetFilter } from '@domains/common/components/ui/table/data-t
 import { DataTableSearch } from '@domains/common/components/ui/table/data-table-search';
 import { columns } from '../../constants/tableColumns';
 import { useEventTableFilters } from '../../hooks/useEventTableFilters';
-import { EventListType } from '@models/index';
+import { useFetchEventListQuery } from '@domains/event/netwrok/eventQueries';
 
-export default function EventTable({
-  data,
-  totalData
-}: {
-  data: EventListType[];
-  totalData: number;
-}) {
+interface EventTableProps {
+  filters: {
+    page: number;
+    limit: number;
+    search?: string;
+    genders?: string;
+  };
+}
+
+export default function EventTable({ filters }: EventTableProps) {
+  const { data: eventList } = useFetchEventListQuery({
+    page: filters.page,
+    size: filters.limit
+  });
+
   const {
     isAnyFilterActive,
     resetFilters,
@@ -36,7 +44,11 @@ export default function EventTable({
           onReset={resetFilters}
         />
       </div>
-      <DataTable columns={columns} data={data} totalItems={totalData} />
+      <DataTable
+        columns={columns}
+        data={eventList?.data || []}
+        totalItems={eventList?.pagination.totalPage || 0}
+      />
     </div>
   );
 }
