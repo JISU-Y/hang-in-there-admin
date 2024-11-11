@@ -1,2 +1,2 @@
-export { default as ProductListingPage } from './ProductListingPage';
-export { default as ProductViewPage } from './ProductViewPage';
+export { default as BannerListingPage } from './BannerListingPage';
+export { default as BannerViewPage } from './BannerViewPage';

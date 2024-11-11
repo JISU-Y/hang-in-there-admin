@@ -49,6 +49,11 @@ export const NAVIGATION_ROUTE = {
     PATHNAME: '/dashboard/banner',
     QUERY: {}
   },
+  BANNER_NEW: {
+    HREF: '/dashboard/banner/new',
+    PATHNAME: '/dashboard/banner/new',
+    QUERY: {}
+  },
   BANNER_DETAIL: {
     HREF: '/dashboard/banner',
     PATHNAME: '/dashboard/banner/[bannerId]',

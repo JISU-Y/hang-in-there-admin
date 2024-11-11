@@ -1,5 +1,5 @@
 import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
-import { ProductListingPage } from '@domains/banner/view';
+import { BannerListingPage } from '@domains/banner/view';
 import { SearchParams } from 'nuqs/parsers';
 
 type pageProps = {
@@ -14,5 +14,5 @@ export default async function Page({ searchParams }: pageProps) {
   // Allow nested RSCs to access the search params (in a type-safe way)
   searchParamsCache.parse(searchParams);
 
-  return <ProductListingPage />;
+  return <BannerListingPage />;
 }

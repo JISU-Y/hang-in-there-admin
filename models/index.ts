@@ -49,8 +49,8 @@ export interface EventListType {
 export interface GetBannerListRequest {
   page: number;
   size: number;
-  useYn: StringBooleanType;
-  status: BannerStatusType;
+  useYn?: StringBooleanType;
+  status?: BannerStatusType;
 }
 
 export interface BannerType {
@@ -67,4 +67,13 @@ export interface BannerType {
   create_id: number;
   update_id: number | null;
   use_yn: StringBooleanType;
+}
+
+export interface CreateBannerDto {
+  bgImageUrl: string;
+  eventImageUrl: string;
+  content: string;
+  link: string;
+  startDate: string;
+  endDate: string;
 }

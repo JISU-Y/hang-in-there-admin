@@ -1,9 +1,9 @@
-import { ProductViewPage } from '@domains/banner/view';
+import { BannerViewPage } from '@domains/banner/view';
 
 export const metadata = {
-  title: 'Dashboard : Product View'
+  title: 'Dashboard : Banner View'
 };
 
 export default function Page() {
-  return <ProductViewPage />;
+  return <BannerViewPage />;
 }

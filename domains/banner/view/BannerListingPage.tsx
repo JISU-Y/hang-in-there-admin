@@ -8,18 +8,20 @@ import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
 import { cn } from '@logics/utils/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import { BannerStatusType, StringBooleanType } from '@models/client';
+import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Products', link: '/dashboard/banner' }
+  { title: 'Banner', link: '/dashboard/banner' }
 ];
 
 export default async function BannerListingPage() {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
   const pageLimit = searchParamsCache.get('limit');
-  const useYn = searchParamsCache.get('useYn');
-  const status = searchParamsCache.get('status');
+  const useYn = searchParamsCache.get('useYn') as StringBooleanType;
+  const status = searchParamsCache.get('status') as BannerStatusType;
 
   const filters = {
     page,
@@ -38,7 +40,7 @@ export default async function BannerListingPage() {
             description="배너 리스트를 수정할 수 있습니다."
           />
           <Link
-            href={'/dashboard/product/new'}
+            href={NAVIGATION_ROUTE.BANNER_NEW.HREF}
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New

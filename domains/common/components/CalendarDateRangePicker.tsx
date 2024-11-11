@@ -8,17 +8,28 @@ import {
 } from '@domains/common/components/ui/popover';
 import { cn } from '@logics/utils/utils';
 import { CalendarIcon } from '@radix-ui/react-icons';
-import { addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 import * as React from 'react';
-import { DateRange } from 'react-day-picker';
+import { DateRange, SelectRangeEventHandler } from 'react-day-picker';
+
+interface CalendarDateRangePickerProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  onSelectDate?: (date?: DateRange) => void;
+}
 
 export function CalendarDateRangePicker({
-  className
-}: React.HTMLAttributes<HTMLDivElement>) {
+  className,
+  onSelectDate
+}: CalendarDateRangePickerProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2023, 0, 20),
-    to: addDays(new Date(2023, 0, 20), 20)
+    from: undefined,
+    to: undefined
   });
+
+  const handleSelectDate: SelectRangeEventHandler = (date) => {
+    setDate(date);
+    onSelectDate?.(date);
+  };
 
   return (
     <div className={cn('grid gap-2', className)}>
@@ -43,7 +54,7 @@ export function CalendarDateRangePicker({
                 format(date.from, 'LLL dd, y')
               )
             ) : (
-              <span>Pick a date</span>
+              <span>날짜 선택</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -53,7 +64,7 @@ export function CalendarDateRangePicker({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={handleSelectDate}
             numberOfMonths={2}
           />
         </PopoverContent>
