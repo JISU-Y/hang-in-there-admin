@@ -39,7 +39,7 @@ export const FORM_ERROR_TEXT = {
 } as const;
 
 export const createBannerFormSchema = object({
-  bgImageUrl: any()
+  bgImageFile: any()
     .refine(
       (files) => files?.[0]?.size <= MAX_FILE_SIZE_MB * 1000 ** 1000,
       `Max file size is 5MB.`
@@ -48,7 +48,7 @@ export const createBannerFormSchema = object({
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       '.jpg, .jpeg, .png and .webp files are accepted.'
     ),
-  eventImageUrl: any()
+  eventImageFile: any()
     .refine(
       (files) => files?.[0]?.size <= MAX_FILE_SIZE_MB * 1000 ** 1000,
       `Max file size is 5MB.`

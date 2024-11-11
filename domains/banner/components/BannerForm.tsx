@@ -26,8 +26,14 @@ import { CalendarDateRangePicker } from '@domains/common/components/CalendarDate
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 import { cn } from '@logics/utils/utils';
+import { useCreateBannerMutation } from '../network/bannerMutations';
+import { uploadFile } from '@logics/utils/imageHandler';
+import { useRouter } from 'next/navigation';
+import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
 
 export default function BannerForm() {
+  const { replace } = useRouter();
+
   const form = useForm<CreateBannerFormSchemaType>({
     resolver: zodResolver(createBannerFormSchema),
     defaultValues: {
@@ -36,8 +42,24 @@ export default function BannerForm() {
     }
   });
 
-  const onSubmit: SubmitHandler<CreateBannerFormSchemaType> = (values) => {
-    console.log(values);
+  const { mutateAsync: bannerMutation } = useCreateBannerMutation();
+
+  const onSubmit: SubmitHandler<CreateBannerFormSchemaType> = async (
+    values
+  ) => {
+    // TODO: 병렬 요청으로 변경 필요
+    const bgImageUrl = await uploadFile(values.bgImageFile, 'banner');
+    const eventImageUrl = await uploadFile(values.eventImageFile, 'banner');
+
+    if (!bgImageUrl || !eventImageUrl) return;
+
+    try {
+      await bannerMutation({ ...values, bgImageUrl, eventImageUrl });
+
+      replace(NAVIGATION_ROUTE.BANNER.HREF);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleSelectDate = (date?: DateRange) => {
@@ -62,7 +84,7 @@ export default function BannerForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="bgImageUrl"
+              name="bgImageFile"
               render={({ field }) => (
                 <div className="space-y-6">
                   <FormItem className="w-full">
@@ -88,7 +110,7 @@ export default function BannerForm() {
             />
             <FormField
               control={form.control}
-              name="eventImageUrl"
+              name="eventImageFile"
               render={({ field }) => (
                 <div className="space-y-6">
                   <FormItem className="w-full">
@@ -149,7 +171,7 @@ export default function BannerForm() {
               <FormLabel>배너 게시 기간</FormLabel>
               <CalendarDateRangePicker onSelectDate={handleSelectDate} />
             </div>
-            <Button type="submit">Add Product</Button>
+            <Button type="submit">배너 추가하기</Button>
           </form>
         </Form>
       </CardContent>

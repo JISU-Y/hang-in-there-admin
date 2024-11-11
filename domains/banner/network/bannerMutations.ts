@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 
 const bannerApi = new BaseApi('');
 
-export const useCreateBanner = () => {
+export const useCreateBannerMutation = () => {
   return useMutation({
     mutationFn: async (body: CreateBannerDto) => {
       const { data } = await bannerApi.post<ApiDataResponseType<void>>(
