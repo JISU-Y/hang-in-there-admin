@@ -47,14 +47,15 @@ export default function BannerForm() {
   const onSubmit: SubmitHandler<CreateBannerFormSchemaType> = async (
     values
   ) => {
+    const { bgImageFile, eventImageFile, ...bannerBody } = values;
     // TODO: 병렬 요청으로 변경 필요
-    const bgImageUrl = await uploadFile(values.bgImageFile, 'banner');
-    const eventImageUrl = await uploadFile(values.eventImageFile, 'banner');
+    const bgImageUrl = await uploadFile(bgImageFile?.[0], 'banner');
+    const eventImageUrl = await uploadFile(eventImageFile?.[0], 'banner');
 
     if (!bgImageUrl || !eventImageUrl) return;
 
     try {
-      await bannerMutation({ ...values, bgImageUrl, eventImageUrl });
+      await bannerMutation({ ...bannerBody, bgImageUrl, eventImageUrl });
 
       replace(NAVIGATION_ROUTE.BANNER.HREF);
     } catch (error) {
