@@ -1,5 +1,4 @@
 import { Breadcrumbs } from '@domains/common/components/BreadcrumbLinks';
-import { ScrollArea } from '@domains/common/components/ui/scroll-area';
 import React from 'react';
 import BannerForm from '../components/BannerForm';
 import PageContainer from '@domains/common/components/layout/page-container';

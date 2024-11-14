@@ -6,17 +6,17 @@ import { DataTableResetFilter } from '@domains/common/components/ui/table/data-t
 import { DataTableSearch } from '@domains/common/components/ui/table/data-table-search';
 import {
   CATEGORY_OPTIONS,
-  useProductTableFilters
-} from '../../hooks/useProductTableFilters';
+  useBannerTableFilters
+} from '../../hooks/useBannerTableFilters';
 import { columns } from '../../constants/tableColumns';
 import { useFetchBannerListQuery } from '@domains/banner/network/bannerQueries';
 import { GetBannerListRequest } from '@models/index';
 
-interface ProductTableProps {
+interface BannerTableProps {
   filters: GetBannerListRequest;
 }
 
-export default function ProductTable({ filters }: ProductTableProps) {
+export default function BannerTable({ filters }: BannerTableProps) {
   const {
     categoriesFilter,
     setCategoriesFilter,
@@ -25,9 +25,10 @@ export default function ProductTable({ filters }: ProductTableProps) {
     searchQuery,
     setPage,
     setSearchQuery
-  } = useProductTableFilters();
+  } = useBannerTableFilters();
 
   const { data: bannerList } = useFetchBannerListQuery(filters);
+  console.log('🚀 ~ ProductTable ~ bannerList:', bannerList);
 
   return (
     <div className="space-y-4 ">

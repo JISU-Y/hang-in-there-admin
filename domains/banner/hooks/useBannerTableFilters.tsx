@@ -14,7 +14,7 @@ export const CATEGORY_OPTIONS = [
   { value: 'Jewelry', label: 'Jewelry' },
   { value: 'Beauty Products', label: 'Beauty Products' }
 ];
-export function useProductTableFilters() {
+export function useBannerTableFilters() {
   const [searchQuery, setSearchQuery] = useQueryState(
     'q',
     searchParams.q
