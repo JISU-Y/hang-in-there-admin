@@ -10,7 +10,9 @@ import {
 } from '../../hooks/useBannerTableFilters';
 import { columns } from '../../constants/tableColumns';
 import { useFetchBannerListQuery } from '@domains/banner/network/bannerQueries';
-import { GetBannerListRequest } from '@models/index';
+import { BannerType, GetBannerListRequest } from '@models/index';
+import { createColumnHelper } from '@tanstack/react-table';
+import { Switch } from '@domains/common/components/ui/switch';
 
 interface BannerTableProps {
   filters: GetBannerListRequest;

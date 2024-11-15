@@ -15,5 +15,6 @@ export const useFetchBannerListQuery = (
     queryKey: bannerQueryKeys.bannerList({ params }),
     queryFn: async () => await getBannerList(params),
     ...options
+    // select: ({data}) => (data.map(bannerData => ({...bannerData, date_range: bannerData.start_dt})))
   });
 };

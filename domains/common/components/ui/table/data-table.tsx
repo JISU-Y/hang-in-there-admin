@@ -96,7 +96,13 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
-    manualFiltering: true
+    manualFiltering: true,
+    initialState: {
+      columnVisibility: {
+        start_dt: false,
+        end_dt: false
+      }
+    }
   });
 
   return (
