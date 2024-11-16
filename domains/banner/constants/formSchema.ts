@@ -1,4 +1,4 @@
-import { any, array, object, string } from 'zod';
+import { any, object, string } from 'zod';
 
 export const MAX_FILE_SIZE_MB = 5;
 export const ACCEPTED_IMAGE_TYPES = [

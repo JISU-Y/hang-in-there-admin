@@ -45,7 +45,8 @@ export default function BannerTable({ filters }: BannerTableProps) {
       {
         accessorKey: 'use_yn',
         header: '사용 여부',
-        cell: ({ row, cell }) => {
+        size: 75,
+        cell: ({ row }) => {
           return (
             <div className="align-middle">
               <Switch
