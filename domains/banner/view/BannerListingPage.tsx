@@ -1,41 +1,34 @@
 import { Breadcrumbs } from '@domains/common/components/BreadcrumbLinks';
 import PageContainer from '@domains/common/components/layout/page-container';
-import ProductTable from '../components/ProductTable/ProductTable';
+import BannerTable from '../components/BannerTable/BannerTable';
 import { buttonVariants } from '@domains/common/components/ui/button';
 import { Heading } from '@domains/common/components/ui/heading';
 import { Separator } from '@domains/common/components/ui/separator';
-import { Product } from '@domains/common/constants/data';
-import { fakeProducts } from '@domains/common/constants/mock-api';
 import { searchParamsCache } from '@logics/utils/searchParamsHandlers';
 import { cn } from '@logics/utils/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import type { SearchParams } from 'nuqs/server';
+import { BannerStatusType, StringBooleanType } from '@models/client';
+import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Products', link: '/dashboard/product' }
+  { title: 'Banner', link: '/dashboard/banner' }
 ];
 
-type ProductListingPage = {};
-
-export default async function ProductListingPage({}: ProductListingPage) {
+export default async function BannerListingPage() {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
-  const categories = searchParamsCache.get('categories');
+  const useYn = searchParamsCache.get('useYn') as StringBooleanType;
+  const status = searchParamsCache.get('status') as BannerStatusType;
 
   const filters = {
     page,
-    limit: pageLimit,
-    ...(search && { search }),
-    ...(categories && { categories: categories })
+    size: pageLimit,
+    ...(useYn && { useYn }),
+    ...(status && { status })
   };
-
-  const data = await fakeProducts.getProducts(filters);
-  const totalProducts = data.total_products;
-  const products: Product[] = data.products;
 
   return (
     <PageContainer>
@@ -43,18 +36,18 @@ export default async function ProductListingPage({}: ProductListingPage) {
         <Breadcrumbs items={breadcrumbItems} />
         <div className="flex items-start justify-between">
           <Heading
-            title={`Products (${totalProducts})`}
-            description="Manage products (Server side table functionalities.)"
+            title="배너 리스트"
+            description="배너 리스트를 수정할 수 있습니다."
           />
           <Link
-            href={'/dashboard/product/new'}
+            href={NAVIGATION_ROUTE.BANNER_NEW.HREF}
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Link>
         </div>
         <Separator />
-        <ProductTable data={products} totalData={totalProducts} />
+        <BannerTable filters={filters} />
       </div>
     </PageContainer>
   );

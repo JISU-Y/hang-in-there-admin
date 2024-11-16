@@ -43,18 +43,3 @@ export const columns: ColumnDef<EventListType>[] = [
     cell: ({ row }) => <CellAction data={row.original} />
   }
 ];
-
-// event_id
-// image
-// title
-// event_st
-// event_ed
-// content_type
-// area_cd
-// sigungu_cd
-// category
-// sub_category
-// detail_sub_category
-// reg_dt
-// addr
-// addr_detail

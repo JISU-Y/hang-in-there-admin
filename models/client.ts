@@ -1,5 +1,9 @@
 import { UseQueryOptions } from '@tanstack/react-query';
 
+export type StringBooleanType = 'Y' | 'N';
+
+export type BannerStatusType = 'UPCOMING' | 'ACTIVE' | 'EXPIRED';
+
 export interface ApiDataResponseType<T = void> {
   data: T;
   message: string;

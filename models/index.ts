@@ -1,3 +1,5 @@
+import { BannerStatusType, StringBooleanType } from './client';
+
 export interface GetLoginDto {
   id: string;
   pw: string;
@@ -42,4 +44,46 @@ export interface EventListType {
   reg_dt: string;
   addr: string;
   addr_detail: string;
+}
+
+export interface GetBannerListRequest {
+  page: number;
+  size: number;
+  useYn?: StringBooleanType;
+  status?: BannerStatusType;
+}
+
+export interface BannerType {
+  banner_id: number;
+  bg_image: string | null;
+  event_image: string | null;
+  content: string | null;
+  link: string | null;
+  start_dt: string;
+  end_dt: string;
+  order_number: number | null;
+  create_dt: string;
+  update_dt: string | null;
+  create_id: number;
+  update_id: number | null;
+  use_yn: StringBooleanType;
+}
+
+export interface CreateBannerDto {
+  bgImageUrl: string;
+  eventImageUrl: string;
+  content: string;
+  link: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface UpdateBannerUseynDto {
+  bannerId: number;
+  useYn: StringBooleanType;
+}
+
+export interface UpdateBannerOrderDto {
+  bannerId: number;
+  orderNum: number;
 }
