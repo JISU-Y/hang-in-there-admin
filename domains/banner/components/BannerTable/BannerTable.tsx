@@ -8,17 +8,23 @@ import {
   CATEGORY_OPTIONS,
   useBannerTableFilters
 } from '../../hooks/useBannerTableFilters';
-import { columns } from '../../constants/tableColumns';
+import { columns as baseColumns } from '../../constants/tableColumns';
 import { useFetchBannerListQuery } from '@domains/banner/network/bannerQueries';
-import { BannerType, GetBannerListRequest } from '@models/index';
-import { createColumnHelper } from '@tanstack/react-table';
+import { GetBannerListRequest } from '@models/index';
 import { Switch } from '@domains/common/components/ui/switch';
+import { useMemo } from 'react';
+import { useUpdateBannerUsageMutation } from '@domains/banner/network/bannerMutations';
+import { useQueryClient } from '@tanstack/react-query';
+import { bannerQueryKeys } from '@domains/banner/constants/queryKeys';
+import { CellAction } from './CellAction';
 
 interface BannerTableProps {
   filters: GetBannerListRequest;
 }
 
 export default function BannerTable({ filters }: BannerTableProps) {
+  const queryClient = useQueryClient();
+
   const {
     categoriesFilter,
     setCategoriesFilter,
@@ -30,10 +36,44 @@ export default function BannerTable({ filters }: BannerTableProps) {
   } = useBannerTableFilters();
 
   const { data: bannerList } = useFetchBannerListQuery(filters);
-  console.log('🚀 ~ ProductTable ~ bannerList:', bannerList);
+
+  const { mutateAsync: updateBannerUsage } = useUpdateBannerUsageMutation();
+
+  const columns = useMemo(() => {
+    return [
+      ...baseColumns,
+      {
+        accessorKey: 'use_yn',
+        header: '사용 여부',
+        cell: ({ row, cell }) => {
+          return (
+            <div className="align-middle">
+              <Switch
+                checked={row.getValue('use_yn') === 'Y'}
+                onCheckedChange={async () => {
+                  await updateBannerUsage({
+                    bannerId: Number(row.getValue('banner_id')),
+                    useYn: row.getValue('use_yn') === 'Y' ? 'N' : 'Y'
+                  });
+
+                  queryClient.invalidateQueries({
+                    queryKey: bannerQueryKeys.all
+                  });
+                }}
+              />
+            </div>
+          );
+        }
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => <CellAction data={row.original} />
+      }
+    ];
+  }, []);
 
   return (
-    <div className="space-y-4 ">
+    <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-4">
         <DataTableSearch
           searchKey="name"

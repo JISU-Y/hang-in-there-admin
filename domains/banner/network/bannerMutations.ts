@@ -1,6 +1,10 @@
 import BaseApi from '@logics/api/baseApi';
 import { ApiDataResponseType } from '@models/client';
-import { CreateBannerDto } from '@models/index';
+import {
+  CreateBannerDto,
+  UpdateBannerOrderDto,
+  UpdateBannerUseynDto
+} from '@models/index';
 import { useMutation } from '@tanstack/react-query';
 
 const bannerApi = new BaseApi('');
@@ -10,6 +14,32 @@ export const useCreateBannerMutation = () => {
     mutationFn: async (body: CreateBannerDto) => {
       const { data } = await bannerApi.post<ApiDataResponseType<void>>(
         '/banner',
+        body
+      );
+
+      return data;
+    }
+  });
+};
+
+export const useUpdateBannerUsageMutation = () => {
+  return useMutation({
+    mutationFn: async (body: UpdateBannerUseynDto) => {
+      const { data } = await bannerApi.patch<ApiDataResponseType<void>>(
+        '/banner/use-yn',
+        body
+      );
+
+      return data;
+    }
+  });
+};
+
+export const useUpdateBannerOrderMutation = () => {
+  return useMutation({
+    mutationFn: async (body: UpdateBannerOrderDto) => {
+      const { data } = await bannerApi.patch<ApiDataResponseType<void>>(
+        '/banner/order-number',
         body
       );
 

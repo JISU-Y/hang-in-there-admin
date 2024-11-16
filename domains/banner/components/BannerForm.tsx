@@ -28,11 +28,15 @@ import { format } from 'date-fns';
 import { cn } from '@logics/utils/utils';
 import { useCreateBannerMutation } from '../network/bannerMutations';
 import { uploadFile } from '@logics/utils/imageHandler';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
 
 export default function BannerForm() {
   const { replace } = useRouter();
+  const { bannerId } = useParams();
+
+  const isCreatingNewBanner = bannerId === 'new';
+  // TODO: new 아니면 banner 데이터 가져오기 (배너 하나 가져오는 api가 없음)
 
   const form = useForm<CreateBannerFormSchemaType>({
     resolver: zodResolver(createBannerFormSchema),

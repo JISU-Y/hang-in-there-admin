@@ -1,10 +1,8 @@
 'use client';
 import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
-import { CellAction } from '../components/BannerTable/CellAction';
 import { BannerType } from '@models/index';
 import { Checkbox } from '@domains/common/components/ui/checkbox';
-import { Switch } from '@domains/common/components/ui/switch';
 import { format } from 'date-fns';
 import { Button } from '@domains/common/components/ui/button';
 import Link from 'next/link';
@@ -31,19 +29,21 @@ export const columns: ColumnDef<BannerType>[] = [
   },
   {
     accessorKey: 'banner_id',
-    header: '배너 ID'
+    header: 'ID'
   },
   {
     accessorKey: 'bg_image',
-    header: '배너 백그라운드 이미지',
+    header: '백그라운드 이미지',
     cell: ({ row }) => {
       return (
         <div className="relative aspect-square">
           <Image
             src={row.getValue('bg_image')}
             alt={`${row.getValue('name')}-banner-bg`}
-            fill
+            width={200}
+            height={100}
             className="rounded-lg"
+            sizes="200px"
           />
         </div>
       );
@@ -51,15 +51,17 @@ export const columns: ColumnDef<BannerType>[] = [
   },
   {
     accessorKey: 'event_image',
-    header: '배너 포스터',
+    header: '포스터',
     cell: ({ row }) => {
       return (
         <div className="relative aspect-square">
           <Image
             src={row.getValue('event_image')}
             alt={`${row.getValue('name')}-banner-poster`}
-            fill
+            width={100}
+            height={200}
             className="rounded-lg"
+            sizes="100px"
           />
         </div>
       );
@@ -67,11 +69,11 @@ export const columns: ColumnDef<BannerType>[] = [
   },
   {
     accessorKey: 'content',
-    header: '배너 내용'
+    header: '내용'
   },
   {
     accessorKey: 'link',
-    header: '배너 링크',
+    header: '링크',
     cell: ({ row }) => {
       return (
         <Button asChild variant="link">
@@ -82,7 +84,7 @@ export const columns: ColumnDef<BannerType>[] = [
   },
   {
     accessorKey: 'date_range',
-    header: '배너 노출 기간',
+    header: '노출 기간',
     cell: ({ row }) => {
       return (
         <div className="align-middle">
@@ -95,28 +97,10 @@ export const columns: ColumnDef<BannerType>[] = [
   // NOTE: 이 둘은 hide
   {
     accessorKey: 'start_dt',
-    header: '배너 노출 기간'
+    header: '노출 시작 날짜'
   },
   {
     accessorKey: 'end_dt',
-    header: '배너 노출 기간'
-  },
-  {
-    accessorKey: 'use_yn',
-    header: '배너 사용 여부',
-    cell: ({ row }) => {
-      return (
-        <div className="align-middle">
-          <Switch
-            checked={row.getValue('use_yn')}
-            // onCheckedChange={field.onChange}
-          />
-        </div>
-      );
-    }
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    header: '노출 종료 날짜'
   }
 ];

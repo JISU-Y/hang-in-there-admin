@@ -77,3 +77,13 @@ export interface CreateBannerDto {
   startDate: string;
   endDate: string;
 }
+
+export interface UpdateBannerUseynDto {
+  bannerId: number;
+  useYn: StringBooleanType;
+}
+
+export interface UpdateBannerOrderDto {
+  bannerId: number;
+  orderNum: number;
+}
