@@ -39,13 +39,13 @@ export const columns: ColumnDef<BannerType>[] = [
     size: 250,
     cell: ({ row }) => {
       return (
-        <div className="relative aspect-square">
+        <div className="relative flex aspect-square align-middle">
           <Image
             src={row.getValue('bg_image')}
             alt={`banner-${row.getValue('banner_id')}-bg`}
             width={200}
             height={100}
-            className="rounded-lg"
+            className="rounded-lg object-contain"
             sizes="200px"
           />
         </div>

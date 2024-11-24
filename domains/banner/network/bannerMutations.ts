@@ -2,6 +2,7 @@ import BaseApi from '@logics/api/baseApi';
 import { ApiDataResponseType } from '@models/client';
 import {
   CreateBannerDto,
+  UpdateBannerDto,
   UpdateBannerOrderDto,
   UpdateBannerUseynDto
 } from '@models/index';
@@ -13,6 +14,19 @@ export const useCreateBannerMutation = () => {
   return useMutation({
     mutationFn: async (body: CreateBannerDto) => {
       const { data } = await bannerApi.post<ApiDataResponseType<void>>(
+        '/banner',
+        body
+      );
+
+      return data;
+    }
+  });
+};
+
+export const useUpdateBannerMutation = () => {
+  return useMutation({
+    mutationFn: async (body: UpdateBannerDto) => {
+      const { data } = await bannerApi.put<ApiDataResponseType<void>>(
         '/banner',
         body
       );

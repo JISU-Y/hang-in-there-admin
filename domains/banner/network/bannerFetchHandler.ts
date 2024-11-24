@@ -21,3 +21,18 @@ export const getBannerList = (
     }
   });
 };
+
+export const getBannerDetail = (
+  { bannerId }: { bannerId: string },
+  tokens?: { accessToken?: string; refreshToken?: string }
+) => {
+  return bannerApi.get<ApiPaginationDataResponseType<BannerType>>('/detail', {
+    params: { id: bannerId },
+    headers: {
+      ...(tokens?.accessToken && {
+        Authorization: `Bearer ${tokens.accessToken}`
+      }),
+      ...(tokens?.refreshToken && { refresh: tokens.refreshToken })
+    }
+  });
+};

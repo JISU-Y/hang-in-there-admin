@@ -24,29 +24,53 @@ import { CreateBannerFormSchemaType } from '../types';
 import { createBannerFormSchema } from '../constants/formSchema';
 import { CalendarDateRangePicker } from '@domains/common/components/CalendarDateRangePicker';
 import { DateRange } from 'react-day-picker';
-import { format } from 'date-fns';
+import { format, parse, toDate } from 'date-fns';
 import { cn } from '@logics/utils/utils';
-import { useCreateBannerMutation } from '../network/bannerMutations';
-import { uploadFile } from '@logics/utils/imageHandler';
+import {
+  useCreateBannerMutation,
+  useUpdateBannerMutation
+} from '../network/bannerMutations';
+import { convertURLtoFile, uploadFile } from '@logics/utils/imageHandler';
 import { useParams, useRouter } from 'next/navigation';
 import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
+import { useFetchBannerDetailQuery } from '../network/bannerQueries';
 
 export default function BannerForm() {
   const { replace } = useRouter();
-  const { bannerId } = useParams();
+  const { bannerId } = useParams<{ bannerId: string }>();
+
+  const { refetch: fetchBannerDetail } = useFetchBannerDetailQuery(
+    { bannerId },
+    {
+      enabled: bannerId !== 'new'
+    }
+  );
+  const { mutateAsync: createBannerMutation } = useCreateBannerMutation();
+  const { mutateAsync: updateBannerMutation } = useUpdateBannerMutation();
 
   const isCreatingNewBanner = bannerId === 'new';
-  // TODO: new 아니면 banner 데이터 가져오기 (배너 하나 가져오는 api가 없음)
 
   const form = useForm<CreateBannerFormSchemaType>({
     resolver: zodResolver(createBannerFormSchema),
-    defaultValues: {
-      content: '',
-      link: ''
+    defaultValues: async () => {
+      const { data: bannerDetail } = await fetchBannerDetail();
+      const bgImageFile = [
+        await convertURLtoFile(bannerDetail?.bg_image || '')
+      ];
+      const eventImageFile = [
+        await convertURLtoFile(bannerDetail?.event_image || '')
+      ];
+
+      return {
+        content: bannerDetail?.content || '',
+        link: bannerDetail?.link || '',
+        startDate: bannerDetail?.start_dt.split('T')[0] || '',
+        endDate: bannerDetail?.end_dt.split('T')[0] || '',
+        bgImageFile,
+        eventImageFile
+      };
     }
   });
-
-  const { mutateAsync: bannerMutation } = useCreateBannerMutation();
 
   const onSubmit: SubmitHandler<CreateBannerFormSchemaType> = async (
     values
@@ -59,7 +83,20 @@ export default function BannerForm() {
     if (!bgImageUrl || !eventImageUrl) return;
 
     try {
-      await bannerMutation({ ...bannerBody, bgImageUrl, eventImageUrl });
+      if (isCreatingNewBanner) {
+        await createBannerMutation({
+          ...bannerBody,
+          bgImageUrl,
+          eventImageUrl
+        });
+      } else {
+        await updateBannerMutation({
+          ...bannerBody,
+          bgImageUrl,
+          eventImageUrl,
+          bannerId: Number(bannerId)
+        });
+      }
 
       replace(NAVIGATION_ROUTE.BANNER.HREF);
     } catch (error) {
@@ -174,9 +211,27 @@ export default function BannerForm() {
               )}
             >
               <FormLabel>배너 게시 기간</FormLabel>
-              <CalendarDateRangePicker onSelectDate={handleSelectDate} />
+              {form.getValues('startDate') && form.getValues('endDate') && (
+                <CalendarDateRangePicker
+                  selectedDate={{
+                    from: parse(
+                      form.getValues('startDate'),
+                      'yyyy-MM-dd',
+                      new Date()
+                    ),
+                    to: parse(
+                      form.getValues('endDate'),
+                      'yyyy-MM-dd',
+                      new Date()
+                    )
+                  }}
+                  onSelectDate={handleSelectDate}
+                />
+              )}
             </div>
-            <Button type="submit">배너 추가하기</Button>
+            <Button type="submit" disabled={!form.formState.isValid}>
+              배너 {isCreatingNewBanner ? '추가' : '수정'}하기
+            </Button>
           </form>
         </Form>
       </CardContent>
