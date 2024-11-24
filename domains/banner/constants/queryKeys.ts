@@ -4,5 +4,10 @@ export const bannerQueryKeys = {
     ...bannerQueryKeys.all,
     'BANNER_LIST',
     { options }
+  ],
+  bannerDetail: (options?: object) => [
+    ...bannerQueryKeys.all,
+    'BANNER_DETAIl',
+    { options }
   ]
 };

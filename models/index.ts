@@ -78,6 +78,16 @@ export interface CreateBannerDto {
   endDate: string;
 }
 
+export interface UpdateBannerDto {
+  bgImageUrl: string;
+  eventImageUrl: string;
+  content: string;
+  link: string;
+  startDate: string;
+  endDate: string;
+  bannerId: number;
+}
+
 export interface UpdateBannerUseynDto {
   bannerId: number;
   useYn: StringBooleanType;

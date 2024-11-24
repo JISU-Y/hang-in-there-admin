@@ -14,17 +14,20 @@ import { DateRange, SelectRangeEventHandler } from 'react-day-picker';
 
 interface CalendarDateRangePickerProps
   extends React.HTMLAttributes<HTMLDivElement> {
+  selectedDate?: DateRange;
   onSelectDate?: (date?: DateRange) => void;
 }
 
 export function CalendarDateRangePicker({
   className,
-  onSelectDate
-}: CalendarDateRangePickerProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  selectedDate = {
     from: undefined,
     to: undefined
-  });
+  },
+  onSelectDate
+}: CalendarDateRangePickerProps) {
+  console.log('🚀 ~ selectDate:', selectedDate);
+  const [date, setDate] = React.useState<DateRange | undefined>(selectedDate);
 
   const handleSelectDate: SelectRangeEventHandler = (date) => {
     setDate(date);
