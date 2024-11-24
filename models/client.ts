@@ -32,7 +32,7 @@ export interface ApiPaginationDataResponseType<T> {
   statusCode: number;
 }
 
-export type UseQueryOptionsType<T = void, K = unknown, P = void> = Omit<
+export type UseQueryOptionsType<T = void, K = unknown, P = T> = Omit<
   UseQueryOptions<T, K, P>,
   'queryKey' | 'queryFn'
 >;
