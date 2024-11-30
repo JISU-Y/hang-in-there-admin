@@ -12,14 +12,14 @@ interface EventTableProps {
     page: number;
     limit: number;
     search?: string;
-    genders?: string;
   };
 }
 
 export default function EventTable({ filters }: EventTableProps) {
   const { data: eventList } = useFetchEventListQuery({
     page: filters.page,
-    size: filters.limit
+    size: filters.limit,
+    title: filters.search
   });
 
   const {
@@ -29,6 +29,7 @@ export default function EventTable({ filters }: EventTableProps) {
     setPage,
     setSearchQuery
   } = useEventTableFilters();
+  console.log('🚀 ~ EventTable ~ searchQuery:', searchQuery);
 
   return (
     <div className="space-y-4 ">

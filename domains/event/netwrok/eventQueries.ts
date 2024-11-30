@@ -4,11 +4,11 @@ import {
   ApiPaginationDataResponseType,
   UseQueryOptionsType
 } from '@models/client';
-import { EventListType } from '@models/index';
+import { EventListRequestType, EventListType } from '@models/index';
 import { getEventList } from './eventFetchHandler';
 
 export const useFetchEventListQuery = (
-  params: { page: number; size: number },
+  params: EventListRequestType,
   options?: UseQueryOptionsType<ApiPaginationDataResponseType<EventListType[]>>
 ) => {
   return useQuery({

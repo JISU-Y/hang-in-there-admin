@@ -1,5 +1,8 @@
 import { BannerStatusType, StringBooleanType } from './client';
 
+export type EventStatusType = 'on_going' | 'up_comming' | 'closed';
+export type EventListOrderType = 'view_count' | 'title';
+
 export interface GetLoginDto {
   id: string;
   pw: string;
@@ -27,6 +30,20 @@ export interface MemberDto {
 
 export interface UpdatePasswordDto {
   pw: string;
+}
+
+export interface EventListRequestType {
+  page: number;
+  size: number;
+  title?: string;
+  content_type?: string;
+  area_cd?: number;
+  sigungu_cd?: string;
+  category?: string;
+  sub_category?: string;
+  detail_sub_category?: string;
+  status?: EventStatusType;
+  order_type?: EventListOrderType;
 }
 
 export interface EventListType {

@@ -17,16 +17,14 @@ export default function EventListingPage({}: EventListingPageProps) {
   // TODO: event에서는 search query가 중요.
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
-  const gender = searchParamsCache.get('gender');
   const size = searchParamsCache.get('limit');
+  const search = searchParamsCache.get('q');
 
   // TODO: memberList에 query 붙으면 사용
   const filters = {
     page,
     limit: size,
-    ...(search && { search }),
-    ...(gender && { genders: gender })
+    ...(search && { search })
   };
 
   // TODO: server 요청과 client 요청을 나누어야 할 듯.

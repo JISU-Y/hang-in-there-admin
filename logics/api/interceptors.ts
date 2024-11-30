@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 
 import {
+  getAccessToken,
   getRefreshToken,
   removeAuthTokens,
   setAccessToken
@@ -64,6 +65,7 @@ export async function setupInterceptors(instance: AxiosInstance) {
         isRefreshing = true;
 
         return new Promise((resolve, reject) => {
+          const accessToken = getAccessToken();
           const refreshToken = getRefreshToken();
 
           // NOTE: 토큰 재발급 요청
@@ -72,6 +74,11 @@ export async function setupInterceptors(instance: AxiosInstance) {
               `${process.env.NEXT_PUBLIC_HANGINTHERE_API_END_POINT}/v1/admin/member/reissue`,
               {
                 rt: refreshToken
+              },
+              {
+                params: {
+                  Authorization: `Bearer ${accessToken}`
+                }
               }
             )
             .then(({ data }) => {

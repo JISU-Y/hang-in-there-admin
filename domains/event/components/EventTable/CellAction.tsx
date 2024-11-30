@@ -54,9 +54,6 @@ export const CellAction = ({ data }: CellActionProps) => {
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>
