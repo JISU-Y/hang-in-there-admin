@@ -63,6 +63,45 @@ export interface EventListType {
   addr_detail: string;
 }
 
+export interface EventDetailType {
+  event_id: number;
+  content_id: string;
+  title: string;
+  addr: string;
+  addr_detail: string;
+  area_cd: number;
+  sigungu_cd: number;
+  content_type: number;
+  category: number;
+  sub_category: number;
+  detail_sub_category: number;
+  tel: string;
+  event_st: string;
+  event_ed: string;
+  map_x: number;
+  map_y: number;
+  cost_info: string;
+  host: string;
+  sponsor: string;
+  homepage_url: string;
+  description: string;
+  create_dt: string;
+  reg_id: number;
+  up_dt: string;
+  up_id: number;
+  use_yn: StringBooleanType;
+  top_yn: StringBooleanType;
+  like: number;
+  view_count: number;
+  ticket_yn: StringBooleanType;
+  img: [
+    {
+      url: string;
+      sort_order: number;
+    }
+  ];
+}
+
 export interface GetBannerListRequest {
   page: number;
   size: number;

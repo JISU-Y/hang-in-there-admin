@@ -1,6 +1,9 @@
 import BaseApi from '@logics/api/baseApi';
-import { ApiPaginationDataResponseType } from '@models/client';
-import { EventListType } from '@models/index';
+import {
+  ApiDataResponseType,
+  ApiPaginationDataResponseType
+} from '@models/client';
+import { EventDetailType, EventListType } from '@models/index';
 
 const eventApi = new BaseApi('event');
 
@@ -9,6 +12,21 @@ export const getEventList = (
   tokens?: { accessToken?: string; refreshToken?: string }
 ) => {
   return eventApi.get<ApiPaginationDataResponseType<EventListType[]>>('', {
+    params,
+    headers: {
+      ...(tokens?.accessToken && {
+        Authorization: `Bearer ${tokens.accessToken}`
+      }),
+      ...(tokens?.refreshToken && { refresh: tokens.refreshToken })
+    }
+  });
+};
+
+export const getEventDetail = (
+  params: { id: number },
+  tokens?: { accessToken?: string; refreshToken?: string }
+) => {
+  return eventApi.get<ApiDataResponseType<EventDetailType>>(`/${params.id}`, {
     params,
     headers: {
       ...(tokens?.accessToken && {
