@@ -19,7 +19,6 @@ export function useEventTableFilters() {
 
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
-
     setPage(1);
   }, [setSearchQuery, setPage]);
 

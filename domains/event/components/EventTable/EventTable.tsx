@@ -6,6 +6,7 @@ import { DataTableSearch } from '@domains/common/components/ui/table/data-table-
 import { columns } from '../../constants/tableColumns';
 import { useEventTableFilters } from '../../hooks/useEventTableFilters';
 import { useFetchEventListQuery } from '@domains/event/netwrok/eventQueries';
+import { useState } from 'react';
 
 interface EventTableProps {
   filters: {
@@ -16,6 +17,8 @@ interface EventTableProps {
 }
 
 export default function EventTable({ filters }: EventTableProps) {
+  const [columnResizing, setColumnResizing] = useState({});
+
   const { data: eventList } = useFetchEventListQuery({
     page: filters.page,
     size: filters.limit,
@@ -23,15 +26,15 @@ export default function EventTable({ filters }: EventTableProps) {
   });
 
   const {
-    isAnyFilterActive,
-    resetFilters,
     searchQuery,
+    setSearchQuery,
     setPage,
-    setSearchQuery
+    isAnyFilterActive,
+    resetFilters
   } = useEventTableFilters();
 
   return (
-    <div className="space-y-4 ">
+    <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-4">
         <DataTableSearch
           searchKey="name"
@@ -44,11 +47,18 @@ export default function EventTable({ filters }: EventTableProps) {
           onReset={resetFilters}
         />
       </div>
-      <DataTable
-        columns={columns}
-        data={eventList?.data || []}
-        totalItems={eventList?.pagination.totalPage || 0}
-      />
+      <div className="relative">
+        <DataTable
+          columns={columns}
+          data={eventList?.data || []}
+          totalItems={eventList?.pagination.totalPage || 0}
+          enableColumnResizing
+          columnResizeMode="onChange"
+          onColumnResizing={setColumnResizing}
+          state={{ columnResizing }}
+          className="w-fit min-w-full"
+        />
+      </div>
     </div>
   );
 }
