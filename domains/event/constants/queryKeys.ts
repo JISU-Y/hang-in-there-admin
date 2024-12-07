@@ -4,5 +4,10 @@ export const eventQueryKeys = {
     ...eventQueryKeys.all,
     'EVENT_LIST',
     { options }
+  ],
+  eventDetail: (options?: object) => [
+    ...eventQueryKeys.all,
+    'EVENT_DETAIL',
+    { options }
   ]
 };

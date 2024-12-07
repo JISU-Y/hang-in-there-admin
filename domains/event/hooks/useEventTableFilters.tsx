@@ -12,11 +12,6 @@ export function useEventTableFilters() {
       .withDefault('')
   );
 
-  const [genderFilter, setGenderFilter] = useQueryState(
-    'gender',
-    searchParams.gender.withOptions({ shallow: false }).withDefault('')
-  );
-
   const [page, setPage] = useQueryState(
     'page',
     searchParams.page.withDefault(1)
@@ -24,20 +19,17 @@ export function useEventTableFilters() {
 
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
-    setGenderFilter(null);
 
     setPage(1);
-  }, [setSearchQuery, setGenderFilter, setPage]);
+  }, [setSearchQuery, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery || !!genderFilter;
-  }, [searchQuery, genderFilter]);
+    return !!searchQuery;
+  }, [searchQuery]);
 
   return {
     searchQuery,
     setSearchQuery,
-    genderFilter,
-    setGenderFilter,
     page,
     setPage,
     resetFilters,

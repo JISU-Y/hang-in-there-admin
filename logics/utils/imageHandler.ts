@@ -115,6 +115,70 @@ export async function uploadFile(file: File, imageType: UploadImageType) {
   }
 }
 
+export async function uploadFiles(files: File[], imageType: UploadImageType) {
+  try {
+    // 파일을 병렬적으로 업로드할 프로미스 배열
+    const uploadPromises = files.map(async (file) => {
+      let presignedData: PresignedPostDataType;
+
+      const accessToken = getAccessToken();
+
+      try {
+        const { data } = await axios.get<
+          ApiDataResponseType<PresignedPostDataType>
+        >(
+          `${process.env.NEXT_PUBLIC_HANGINTHERE_API_END_POINT}/v1/admin/image/sign-url`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            params: {
+              type: imageType,
+              fileType: file.type
+            }
+          }
+        );
+
+        presignedData = data.data;
+      } catch (error) {
+        alert('Error during presigned URL request: error');
+        console.error('Error during presigned URL request:', error);
+        throw error; // 에러 발생 시 프로미스 거부
+      }
+
+      // FormData에 presignedData 정보들과 File을 append
+      const formData = new FormData();
+      for (const key in presignedData.fields) {
+        formData.append(
+          key,
+          presignedData.fields[key as PresignedFieldsKeyType]
+        );
+      }
+      formData.append('Content-Type', file.type);
+      formData.append('file', file);
+
+      try {
+        await retryUpload(presignedData.url, formData, 3); // AWS S3 URL에 요청
+      } catch (error) {
+        alert('Failed to upload the image to S3. Please retry.');
+        console.error('Error during file upload to S3:', error);
+        throw error; // 에러 발생 시 프로미스 거부
+      }
+
+      // 이미지 URL 반환
+      return `${presignedData.url}${presignedData.fields.key}`;
+    });
+
+    // 모든 파일 업로드 프로미스 완료 대기
+    const imageUrls = await Promise.all(uploadPromises);
+    return imageUrls; // 업로드된 이미지 URL 배열 반환
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    throw error;
+  }
+}
+
 export async function convertURLtoFile(url: string) {
   const response = await fetch(url);
   const data = await response.blob();
@@ -129,4 +193,24 @@ export async function convertURLtoFile(url: string) {
   });
 
   return file;
+}
+
+export async function convertUrlListToFileList(imageList: string[]) {
+  if (!imageList || !Array.isArray(imageList)) {
+    throw new Error('유효한 이미지 배열이 아닙니다.');
+  }
+
+  const filePromises = imageList.map(async (image) => {
+    try {
+      const file = await convertURLtoFile(image);
+      return file; // 변환 성공 시 File 객체 반환
+    } catch (error) {
+      console.error(`URL 변환 오류: ${image}`, error);
+      return undefined;
+    }
+  });
+
+  const results = await Promise.all(filePromises);
+  // undefined 값을 필터링하여 File 객체만 포함
+  return results.filter((file): file is File => file !== undefined);
 }

@@ -20,87 +20,65 @@ import {
   CardContent
 } from '@domains/common/components/ui/card';
 import { FileUploader } from '@domains/common/components/FileUploader';
-import { CreateBannerFormSchemaType } from '../types';
-import { createBannerFormSchema } from '../constants/formSchema';
+
 import { CalendarDateRangePicker } from '@domains/common/components/CalendarDateRangePicker';
 import { DateRange } from 'react-day-picker';
 import { format, parse } from 'date-fns';
 import { cn } from '@logics/utils/utils';
 import {
-  useCreateBannerMutation,
-  useUpdateBannerMutation
-} from '../network/bannerMutations';
-import { convertURLtoFile, uploadFile } from '@logics/utils/imageHandler';
+  convertUrlListToFileList,
+  uploadFiles
+} from '@logics/utils/imageHandler';
 import { useParams, useRouter } from 'next/navigation';
 import { NAVIGATION_ROUTE } from '@domains/common/constants/route';
-import { useFetchBannerDetailQuery } from '../network/bannerQueries';
+import { useFetchEventDetailQuery } from '../netwrok/eventQueries';
+import { UpdateEventFormSchemaType } from '../types';
+import { FORM_LIMIT, updateEventFormSchema } from '../constants/formSchema';
 
-export default function BannerForm() {
+export default function EventForm() {
   const { replace } = useRouter();
-  const { bannerId } = useParams<{ bannerId: string }>();
+  const { id: eventId } = useParams<{ id: string }>();
 
-  const { refetch: fetchBannerDetail } = useFetchBannerDetailQuery(
-    { bannerId },
+  const { refetch: fetchEventDetail } = useFetchEventDetailQuery(
+    { id: eventId },
     {
-      enabled: bannerId !== 'new'
+      enabled: !!eventId
     }
   );
-  const { mutateAsync: createBannerMutation } = useCreateBannerMutation();
-  const { mutateAsync: updateBannerMutation } = useUpdateBannerMutation();
+  // const { mutateAsync: updateBannerMutation } = useUpdateBannerMutation();
 
-  const isCreatingNewBanner = bannerId === 'new';
-
-  const form = useForm<CreateBannerFormSchemaType>({
-    resolver: zodResolver(createBannerFormSchema),
+  const form = useForm<UpdateEventFormSchemaType>({
+    resolver: zodResolver(updateEventFormSchema),
     defaultValues: async () => {
-      const { data: bannerDetail } = await fetchBannerDetail();
-      const bgImageFile = [
-        await convertURLtoFile(bannerDetail?.bg_image || '')
-      ];
-      const eventImageFile = [
-        await convertURLtoFile(bannerDetail?.event_image || '')
-      ];
+      const { data: eventDetail } = await fetchEventDetail();
+      const imageUrlList = eventDetail?.img.map(({ url }) => url);
+      const imageFiles = await convertUrlListToFileList(imageUrlList || []);
 
       return {
-        content: bannerDetail?.content || '',
-        link: bannerDetail?.link || '',
-        startDate: bannerDetail?.start_dt.split('T')[0] || '',
-        endDate: bannerDetail?.end_dt.split('T')[0] || '',
-        bgImageFile,
-        eventImageFile
+        img: imageFiles,
+        description: eventDetail?.description || '',
+        startDate: eventDetail?.event_st.split('T')[0] || '',
+        endDate: eventDetail?.event_ed.split('T')[0] || ''
       };
     }
   });
 
-  const onSubmit: SubmitHandler<CreateBannerFormSchemaType> = async (
-    values
-  ) => {
-    const { bgImageFile, eventImageFile, ...bannerBody } = values;
+  const onSubmit: SubmitHandler<UpdateEventFormSchemaType> = async (values) => {
+    const { img, ...bannerBody } = values;
+    // TODO: 병렬 요청으로 변경 필요
+    const eventImageList = await uploadFiles(img, 'event');
+
+    if (!eventImageList) return;
 
     try {
-      const [bgImageUrl, eventImageUrl] = await Promise.all([
-        uploadFile(bgImageFile?.[0], 'banner'),
-        uploadFile(eventImageFile?.[0], 'banner')
-      ]);
+      // await updateBannerMutation({
+      //   ...bannerBody,
+      //   bgImageUrl,
+      //   eventImageUrl,
+      //   bannerId: Number(bannerId)
+      // });
 
-      if (!bgImageUrl || !eventImageUrl) return;
-
-      if (isCreatingNewBanner) {
-        await createBannerMutation({
-          ...bannerBody,
-          bgImageUrl,
-          eventImageUrl
-        });
-      } else {
-        await updateBannerMutation({
-          ...bannerBody,
-          bgImageUrl,
-          eventImageUrl,
-          bannerId: Number(bannerId)
-        });
-      }
-
-      replace(NAVIGATION_ROUTE.BANNER.HREF);
+      replace(NAVIGATION_ROUTE.EVENT.HREF);
     } catch (error) {
       console.error(error);
     }
@@ -128,7 +106,7 @@ export default function BannerForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="bgImageFile"
+              name="img"
               render={({ field }) => (
                 <div className="space-y-6">
                   <FormItem className="w-full">
@@ -137,9 +115,9 @@ export default function BannerForm() {
                       <FileUploader
                         value={field.value}
                         onValueChange={field.onChange}
-                        multiple={false}
-                        maxFiles={1}
-                        maxSize={4 * 1024 * 1024}
+                        multiple
+                        maxFiles={FORM_LIMIT.IMAGE.MIN_LENGTH}
+                        maxSize={FORM_LIMIT.IMAGE.MAX_FILE_SIZE * 1024 * 1024}
                         // disabled={loading}
                         // progresses={progresses}
                         // pass the onUpload function here for direct upload
@@ -154,44 +132,18 @@ export default function BannerForm() {
             />
             <FormField
               control={form.control}
-              name="eventImageFile"
-              render={({ field }) => (
-                <div className="space-y-6">
-                  <FormItem className="w-full">
-                    <FormLabel>포스터</FormLabel>
-                    <FormControl>
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        multiple={false}
-                        maxFiles={1}
-                        maxSize={4 * 1024 * 1024}
-                        // disabled={loading}
-                        // progresses={progresses}
-                        // pass the onUpload function here for direct upload
-                        // onUpload={uploadFiles}
-                        // disabled={isUploading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </div>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="content"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>배너 문구</FormLabel>
+                  <FormLabel>이벤트 상세 설명</FormLabel>
                   <FormControl>
-                    <Input placeholder="문구를 입력해주세요." {...field} />
+                    <Input placeholder="상세 설명을 입력해주세요." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="link"
               render={({ field }) => (
@@ -203,7 +155,7 @@ export default function BannerForm() {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <div
               className={cn(
                 (form.formState.errors.startDate ||
@@ -232,7 +184,7 @@ export default function BannerForm() {
               )}
             </div>
             <Button type="submit" disabled={!form.formState.isValid}>
-              배너 {isCreatingNewBanner ? '추가' : '수정'}하기
+              이벤트 수정하기
             </Button>
           </form>
         </Form>

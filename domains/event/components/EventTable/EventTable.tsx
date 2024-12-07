@@ -12,14 +12,14 @@ interface EventTableProps {
     page: number;
     limit: number;
     search?: string;
-    genders?: string;
   };
 }
 
 export default function EventTable({ filters }: EventTableProps) {
   const { data: eventList } = useFetchEventListQuery({
     page: filters.page,
-    size: filters.limit
+    size: filters.limit,
+    title: filters.search
   });
 
   const {

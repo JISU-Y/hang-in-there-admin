@@ -9,6 +9,7 @@ import { CellAction } from '../components/EventTable/CellAction';
 export const columns: ColumnDef<EventListType>[] = [
   {
     id: 'select',
+    size: 50,
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
@@ -28,15 +29,18 @@ export const columns: ColumnDef<EventListType>[] = [
   },
   {
     accessorKey: 'event_id',
-    header: '이벤트 id'
+    header: '이벤트 id',
+    size: 200
   },
   {
     accessorKey: 'title',
-    header: '이벤트 제목'
+    header: '이벤트 제목',
+    size: 250
   },
   {
     accessorKey: 'content_type',
-    header: '이벤트 타입'
+    header: '이벤트 타입',
+    size: 100
   },
   {
     id: 'actions',
