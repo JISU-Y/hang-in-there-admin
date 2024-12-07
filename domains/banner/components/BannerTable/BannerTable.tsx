@@ -8,15 +8,13 @@ import {
   CATEGORY_OPTIONS,
   useBannerTableFilters
 } from '../../hooks/useBannerTableFilters';
-import { columns as baseColumns } from '../../constants/tableColumns';
+import { createColumns } from '../../constants/tableColumns';
 import { useFetchBannerListQuery } from '@domains/banner/network/bannerQueries';
 import { GetBannerListRequest } from '@models/index';
-import { Switch } from '@domains/common/components/ui/switch';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useUpdateBannerUsageMutation } from '@domains/banner/network/bannerMutations';
 import { useQueryClient } from '@tanstack/react-query';
 import { bannerQueryKeys } from '@domains/banner/constants/queryKeys';
-import { CellAction } from './CellAction';
 
 interface BannerTableProps {
   filters: GetBannerListRequest;
@@ -24,6 +22,7 @@ interface BannerTableProps {
 
 export default function BannerTable({ filters }: BannerTableProps) {
   const queryClient = useQueryClient();
+  const [columnResizing, setColumnResizing] = useState({});
 
   const {
     categoriesFilter,
@@ -36,42 +35,22 @@ export default function BannerTable({ filters }: BannerTableProps) {
   } = useBannerTableFilters();
 
   const { data: bannerList } = useFetchBannerListQuery(filters);
-
   const { mutateAsync: updateBannerUsage } = useUpdateBannerUsageMutation();
 
-  const columns = useMemo(() => {
-    return [
-      ...baseColumns,
-      {
-        accessorKey: 'use_yn',
-        header: '사용 여부',
-        size: 75,
-        cell: ({ row }) => {
-          return (
-            <div className="align-middle">
-              <Switch
-                checked={row.getValue('use_yn') === 'Y'}
-                onCheckedChange={async () => {
-                  await updateBannerUsage({
-                    bannerId: Number(row.getValue('banner_id')),
-                    useYn: row.getValue('use_yn') === 'Y' ? 'N' : 'Y'
-                  });
+  const handleUpdateBannerUsage = useCallback(
+    async (params: { bannerId: number; useYn: 'Y' | 'N' }) => {
+      await updateBannerUsage(params);
+      queryClient.invalidateQueries({
+        queryKey: bannerQueryKeys.all
+      });
+    },
+    [queryClient, updateBannerUsage]
+  );
 
-                  queryClient.invalidateQueries({
-                    queryKey: bannerQueryKeys.all
-                  });
-                }}
-              />
-            </div>
-          );
-        }
-      },
-      {
-        id: 'actions',
-        cell: ({ row }) => <CellAction data={row.original} />
-      }
-    ];
-  }, []);
+  const columns = useMemo(
+    () => createColumns({ onUpdateBannerUsage: handleUpdateBannerUsage }),
+    [handleUpdateBannerUsage]
+  );
 
   return (
     <div className="space-y-4">
@@ -94,11 +73,18 @@ export default function BannerTable({ filters }: BannerTableProps) {
           onReset={resetFilters}
         />
       </div>
-      <DataTable
-        columns={columns}
-        data={bannerList?.data || []}
-        totalItems={bannerList?.pagination.totalPage || 0}
-      />
+      <div className="relative">
+        <DataTable
+          columns={columns}
+          data={bannerList?.data || []}
+          totalItems={bannerList?.pagination.totalPage || 0}
+          enableColumnResizing
+          columnResizeMode="onChange"
+          onColumnResizing={setColumnResizing}
+          state={{ columnResizing }}
+          className="w-fit min-w-full"
+        />
+      </div>
     </div>
   );
 }

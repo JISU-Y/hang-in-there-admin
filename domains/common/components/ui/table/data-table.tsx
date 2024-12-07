@@ -35,19 +35,32 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { useState } from 'react';
+import { cn } from '@logics/utils/utils';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   totalItems: number;
   pageSizeOptions?: number[];
+  enableColumnResizing?: boolean;
+  columnResizeMode?: 'onChange' | 'onEnd';
+  onColumnResizing?: (updater: any) => void;
+  state?: {
+    columnResizing?: any;
+  };
+  className?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   totalItems,
-  pageSizeOptions = [10, 20, 30, 40, 50]
+  pageSizeOptions = [10, 20, 30, 40, 50],
+  enableColumnResizing,
+  columnResizeMode = 'onChange',
+  onColumnResizing,
+  state,
+  className
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [currentPage, setCurrentPage] = useQueryState(
@@ -62,7 +75,7 @@ export function DataTable<TData, TValue>({
   );
 
   const paginationState = {
-    pageIndex: currentPage - 1, // zero-based index for React Table
+    pageIndex: currentPage - 1,
     pageSize: pageSize
   };
 
@@ -78,7 +91,7 @@ export function DataTable<TData, TValue>({
         ? updaterOrValue(paginationState)
         : updaterOrValue;
 
-    setCurrentPage(pagination.pageIndex + 1); // converting zero-based index to one-based
+    setCurrentPage(pagination.pageIndex + 1);
     setPageSize(pagination.pageSize);
   };
 
@@ -88,7 +101,8 @@ export function DataTable<TData, TValue>({
     pageCount: pageCount,
     state: {
       pagination: paginationState,
-      columnFilters
+      columnFilters,
+      columnSizing: state?.columnResizing || {}
     },
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: handlePaginationChange,
@@ -97,6 +111,9 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     manualFiltering: true,
+    enableColumnResizing,
+    columnResizeMode,
+    onColumnSizingChange: onColumnResizing,
     initialState: {
       columnVisibility: {
         start_dt: false,
@@ -105,58 +122,97 @@ export function DataTable<TData, TValue>({
     }
   });
 
+  const totalWidth = table.getAllColumns().reduce((acc, column) => {
+    return acc + column.getSize();
+  }, 0);
+
   return (
     <div className="space-y-4">
       <ScrollArea className="h-[calc(80vh-220px)] rounded-md border md:h-[calc(80dvh-200px)]">
-        <Table className="relative w-max">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={`w-[${cell.column.getSize()}]`}
+        <div
+          style={{ width: `${totalWidth}px`, minWidth: '100%' }}
+          className={cn('relative', className)}
+        >
+          <Table className="w-full table-fixed">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      style={{
+                        width: `${header.getSize()}px`,
+                        position: 'relative'
+                      }}
+                      className="group"
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {header.isPlaceholder ? null : (
+                        <div className="flex items-center">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </div>
                       )}
-                    </TableCell>
+                      {enableColumnResizing && header.column.getCanResize() && (
+                        <>
+                          <div
+                            onMouseDown={header.getResizeHandler()}
+                            onTouchStart={header.getResizeHandler()}
+                            onDoubleClick={() => {
+                              const column = header.column;
+                              column.resetSize();
+                            }}
+                            className={cn(
+                              'absolute right-0 top-0 h-full w-1 cursor-col-resize touch-none select-none hover:bg-primary',
+                              header.column.getIsResizing()
+                                ? 'bg-primary'
+                                : 'bg-border'
+                            )}
+                            title="더블 클릭하여 기본 크기로 되돌리기"
+                          />
+                        </>
+                      )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          width: `${cell.column.getSize()}px`
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 

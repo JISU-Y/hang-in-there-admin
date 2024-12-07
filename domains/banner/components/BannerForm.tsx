@@ -76,13 +76,15 @@ export default function BannerForm() {
     values
   ) => {
     const { bgImageFile, eventImageFile, ...bannerBody } = values;
-    // TODO: 병렬 요청으로 변경 필요
-    const bgImageUrl = await uploadFile(bgImageFile?.[0], 'banner');
-    const eventImageUrl = await uploadFile(eventImageFile?.[0], 'banner');
-
-    if (!bgImageUrl || !eventImageUrl) return;
 
     try {
+      const [bgImageUrl, eventImageUrl] = await Promise.all([
+        uploadFile(bgImageFile?.[0], 'banner'),
+        uploadFile(eventImageFile?.[0], 'banner')
+      ]);
+
+      if (!bgImageUrl || !eventImageUrl) return;
+
       if (isCreatingNewBanner) {
         await createBannerMutation({
           ...bannerBody,
