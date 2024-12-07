@@ -155,8 +155,7 @@ export const fakeUsers = {
     genders?: string;
     search?: string;
   }) {
-    const gendersArray = genders ? genders.split('.') : [];
-    console.log('gendersArray', gendersArray);
+    const gendersArray = genders ? Object.values(genders) : [];
     const allUsers = await this.getAll({ genders: gendersArray, search });
     const totalUsers = allUsers.length;
 

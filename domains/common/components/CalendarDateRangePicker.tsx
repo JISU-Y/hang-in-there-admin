@@ -26,13 +26,19 @@ export function CalendarDateRangePicker({
   },
   onSelectDate
 }: CalendarDateRangePickerProps) {
-  console.log('🚀 ~ selectDate:', selectedDate);
   const [date, setDate] = React.useState<DateRange | undefined>(selectedDate);
 
   const handleSelectDate: SelectRangeEventHandler = (date) => {
     setDate(date);
     onSelectDate?.(date);
   };
+
+  const handleSelect = React.useCallback(
+    (date: DateRange | undefined) => {
+      onSelectDate?.(date);
+    },
+    [onSelectDate]
+  );
 
   return (
     <div className={cn('grid gap-2', className)}>

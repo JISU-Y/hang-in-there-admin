@@ -29,7 +29,6 @@ export default function EventTable({ filters }: EventTableProps) {
     setPage,
     setSearchQuery
   } = useEventTableFilters();
-  console.log('🚀 ~ EventTable ~ searchQuery:', searchQuery);
 
   return (
     <div className="space-y-4 ">
