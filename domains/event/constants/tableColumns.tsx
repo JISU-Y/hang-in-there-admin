@@ -5,6 +5,8 @@ import { Checkbox } from '@domains/common/components/ui/checkbox';
 import { EventListType } from '@models/index';
 import { CellAction } from '../components/EventTable/CellAction';
 import { format } from 'date-fns';
+import Image from 'next/image';
+import { ImageIcon } from '@radix-ui/react-icons';
 
 export const columns: ColumnDef<EventListType>[] = [
   {
@@ -35,6 +37,40 @@ export const columns: ColumnDef<EventListType>[] = [
     size: 100,
     minSize: 80,
     maxSize: 150
+  },
+  {
+    id: 'poster',
+    header: '포스터',
+    size: 100,
+    minSize: 80,
+    maxSize: 150,
+    cell: ({ row }) => {
+      if (row.original.image) {
+        return (
+          <div className="flex h-full w-full items-center justify-center py-2">
+            <Image
+              src={row.original.image}
+              alt="포스터"
+              width={56}
+              height={56}
+              className="rounded-md object-cover"
+              style={{
+                width: '100%',
+                maxWidth: '56px',
+                height: '56px'
+              }}
+            />
+          </div>
+        );
+      }
+      return (
+        <div className="flex h-full w-full items-center justify-center py-2">
+          <div className="flex h-[56px] w-[56px] items-center justify-center rounded-md bg-gray-100">
+            <ImageIcon className="h-8 w-8 text-gray-400" />
+          </div>
+        </div>
+      );
+    }
   },
   {
     accessorKey: 'title',
