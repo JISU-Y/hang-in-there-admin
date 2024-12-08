@@ -1,36 +1,40 @@
 'use client';
 
-import { searchParams } from '@logics/utils/searchParamsHandlers';
+import { useCallback } from 'react';
 import { useQueryState } from 'nuqs';
-import { useCallback, useMemo } from 'react';
 
 export function useEventTableFilters() {
-  const [searchQuery, setSearchQuery] = useQueryState(
-    'q',
-    searchParams.q
-      .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault('')
-  );
-
-  const [page, setPage] = useQueryState(
-    'page',
-    searchParams.page.withDefault(1)
-  );
+  const [page, setPage] = useQueryState<number>('page', {
+    defaultValue: 1,
+    parse: (value: string | null) => (value ? Number(value) : 1)
+  });
+  const [searchQuery, setSearchQuery] = useQueryState('search', {
+    defaultValue: null,
+    parse: (value: string | null) => value
+  });
+  const [statusFilter, setStatusFilter] = useQueryState('status', {
+    defaultValue: null,
+    parse: (value: string | null) => {
+      if (!value) return null;
+      return value;
+    }
+  });
 
   const resetFilters = useCallback(() => {
-    setSearchQuery(null);
     setPage(1);
-  }, [setSearchQuery, setPage]);
+    setSearchQuery(null);
+    setStatusFilter(null);
+  }, [setPage, setSearchQuery, setStatusFilter]);
 
-  const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery;
-  }, [searchQuery]);
+  const isAnyFilterActive = Boolean(searchQuery || statusFilter);
 
   return {
+    page: Number(page),
     searchQuery,
-    setSearchQuery,
-    page,
+    statusFilter,
     setPage,
+    setSearchQuery,
+    setStatusFilter,
     resetFilters,
     isAnyFilterActive
   };

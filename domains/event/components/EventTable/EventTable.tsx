@@ -7,12 +7,16 @@ import { columns } from '../../constants/tableColumns';
 import { useEventTableFilters } from '../../hooks/useEventTableFilters';
 import { useFetchEventListQuery } from '@domains/event/netwrok/eventQueries';
 import { useState } from 'react';
+import { DataTableFilterBox } from '@domains/common/components/ui/table/data-table-filter-box';
+import { STATUS_OPTIONS } from '@domains/event/constants/statusOptions';
+import { EventStatusType } from '@models/index';
 
 interface EventTableProps {
   filters: {
     page: number;
     limit: number;
-    search?: string;
+    search?: string | null;
+    status?: string | null;
   };
 }
 
@@ -22,11 +26,14 @@ export default function EventTable({ filters }: EventTableProps) {
   const { data: eventList } = useFetchEventListQuery({
     page: filters.page,
     size: filters.limit,
-    title: filters.search
+    ...(filters.search && { title: filters.search }),
+    ...(filters.status && { status: filters.status as EventStatusType })
   });
 
   const {
     searchQuery,
+    statusFilter,
+    setStatusFilter,
     setSearchQuery,
     setPage,
     isAnyFilterActive,
@@ -38,9 +45,16 @@ export default function EventTable({ filters }: EventTableProps) {
       <div className="flex flex-wrap items-center gap-4">
         <DataTableSearch
           searchKey="name"
-          searchQuery={searchQuery}
+          searchQuery={searchQuery || ''}
           setSearchQuery={setSearchQuery}
           setPage={setPage}
+        />
+        <DataTableFilterBox
+          filterKey="status"
+          title="상태"
+          options={STATUS_OPTIONS}
+          setFilterValue={setStatusFilter}
+          filterValue={statusFilter || ''}
         />
         <DataTableResetFilter
           isFilterActive={isAnyFilterActive}

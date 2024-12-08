@@ -5,28 +5,31 @@ import { cn } from '@logics/utils/utils';
 import { Options } from 'nuqs';
 import { useTransition } from 'react';
 
-interface DataTableSearchProps {
+interface DataTableSearchProps<TSearchValue = string> {
   searchKey: string;
-  searchQuery: string;
+  searchQuery: TSearchValue | null;
   setSearchQuery: (
-    value: string | ((old: string) => string | null) | null,
-    options?: Options<any> | undefined
+    value:
+      | TSearchValue
+      | ((old: TSearchValue | null) => TSearchValue | null)
+      | null,
+    options?: Options<unknown> | undefined
   ) => Promise<URLSearchParams>;
-  setPage: <Shallow>(
+  setPage: (
     value: number | ((old: number) => number | null) | null,
-    options?: Options<Shallow> | undefined
+    options?: Options<unknown> | undefined
   ) => Promise<URLSearchParams>;
 }
 
-export function DataTableSearch({
+export function DataTableSearch<TSearchValue = string>({
   searchKey,
   searchQuery,
   setSearchQuery,
   setPage
-}: DataTableSearchProps) {
+}: DataTableSearchProps<TSearchValue>) {
   const [isLoading, startTransition] = useTransition();
 
-  const handleSearch = (value: string) => {
+  const handleSearch = (value: TSearchValue) => {
     setSearchQuery(value, { startTransition });
     setPage(1); // Reset page to 1 when search changes
   };
@@ -34,8 +37,8 @@ export function DataTableSearch({
   return (
     <Input
       placeholder={`Search ${searchKey}...`}
-      value={searchQuery ?? ''}
-      onChange={(e) => handleSearch(e.target.value)}
+      value={searchQuery as string}
+      onChange={(e) => handleSearch(e.target.value as TSearchValue)}
       className={cn('w-full md:max-w-sm', isLoading && 'animate-pulse')}
     />
   );
