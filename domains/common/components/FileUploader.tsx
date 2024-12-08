@@ -1,6 +1,6 @@
 'use client';
 
-import { CrossIcon, UploadIcon } from 'lucide-react';
+import { CrossIcon, UploadIcon, X } from 'lucide-react';
 import Image from 'next/image';
 import * as React from 'react';
 import Dropzone, {
@@ -8,12 +8,19 @@ import Dropzone, {
   type FileRejection
 } from 'react-dropzone';
 import { toast } from 'sonner';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult
+} from '@hello-pangea/dnd';
 
 import { Button } from '@domains/common/components/ui/button';
 import { Progress } from '@domains/common/components/ui/progress';
 import { ScrollArea } from '@domains/common/components/ui/scroll-area';
 import { useControllableState } from '@logics/hooks/useControllableState';
 import { cn, formatBytes } from '@logics/utils/utils';
+import { useCallback } from 'react';
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -22,7 +29,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default undefined
    * @example value={files}
    */
-  value?: File[];
+  value: File[];
 
   /**
    * Function to be called when the value changes.
@@ -30,7 +37,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default undefined
    * @example onValueChange={(files) => setFiles(files)}
    */
-  onValueChange?: React.Dispatch<React.SetStateAction<File[]>>;
+  onValueChange: (files: File[]) => void;
 
   /**
    * Function to be called when files are uploaded.
@@ -90,6 +97,22 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @example disabled
    */
   disabled?: boolean;
+
+  /**
+   * Whether to enable drag and drop sorting.
+   * @type boolean
+   * @default false
+   * @example enableDragSort
+   */
+  enableDragSort?: boolean;
+
+  /**
+   * Custom delete icon.
+   * @type React.ReactNode
+   * @default undefined
+   * @example deleteIcon={<CustomDeleteIcon />}
+   */
+  deleteIcon?: React.ReactNode;
 }
 
 export function FileUploader(props: FileUploaderProps) {
@@ -104,6 +127,8 @@ export function FileUploader(props: FileUploaderProps) {
     multiple = false,
     disabled = false,
     className,
+    enableDragSort = false,
+    deleteIcon,
     ...dropzoneProps
   } = props;
 
@@ -184,6 +209,19 @@ export function FileUploader(props: FileUploaderProps) {
 
   const isDisabled = disabled || (files?.length ?? 0) >= maxFiles;
 
+  const handleDragEnd = useCallback(
+    (result: DropResult) => {
+      if (!result.destination) return;
+
+      const items = Array.from(files || []);
+      const [reorderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
+
+      onValueChange(items);
+    },
+    [files, onValueChange]
+  );
+
   return (
     <div className="relative flex flex-col gap-6 overflow-hidden">
       <Dropzone
@@ -244,15 +282,56 @@ export function FileUploader(props: FileUploaderProps) {
           </div>
         )}
       </Dropzone>
-      {files?.length ? (
+      {enableDragSort ? (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="files" direction="horizontal">
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="grid grid-cols-4 gap-4"
+              >
+                {files?.map((file, index) => (
+                  <Draggable
+                    key={file.name}
+                    draggableId={file.name}
+                    index={index}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className={cn(
+                          'relative',
+                          snapshot.isDragging && 'shadow-lg'
+                        )}
+                      >
+                        <FileCard
+                          file={file}
+                          onRemove={() => onRemove(index)}
+                          progress={progresses?.[file.name]}
+                          index={index}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      ) : files?.length ? (
         <ScrollArea className="h-fit w-full px-3">
-          <div className="max-h-48 space-y-4">
-            {files?.map((file, index) => (
+          <div className="grid grid-cols-4 gap-4 pb-4">
+            {files.map((file, index) => (
               <FileCard
-                key={index}
+                key={file.name}
                 file={file}
                 onRemove={() => onRemove(index)}
                 progress={progresses?.[file.name]}
+                index={index}
               />
             ))}
           </div>
@@ -266,46 +345,50 @@ interface FileCardProps {
   file: File;
   onRemove: () => void;
   progress?: number;
+  index?: number;
 }
 
-function FileCard({ file, progress, onRemove }: FileCardProps) {
+function FileCard({ file, progress, onRemove, index = 0 }: FileCardProps) {
+  const isMainImage = index === 0;
+
   return (
-    <div className="relative flex items-center space-x-4">
-      <div className="flex flex-1 space-x-4">
-        {isFileWithPreview(file) ? (
-          <Image
-            src={file.preview}
-            alt={file.name}
-            width={48}
-            height={48}
-            loading="lazy"
-            className="aspect-square shrink-0 rounded-md object-cover"
-          />
-        ) : null}
-        <div className="flex w-full flex-col gap-2">
-          <div className="space-y-px">
-            <p className="line-clamp-1 text-sm font-medium text-foreground/80">
-              {file.name}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {formatBytes(file.size)}
-            </p>
-          </div>
-          {progress ? <Progress value={progress} /> : null}
+    <div
+      className={cn(
+        'relative rounded-lg border bg-background p-2',
+        isMainImage && 'border-primary ring-1 ring-primary'
+      )}
+    >
+      {isMainImage && (
+        <div className="absolute -right-2 -top-2 z-10 rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
+          대표
         </div>
+      )}
+      <div className="relative aspect-video w-full overflow-hidden rounded-md">
+        <Image
+          src={URL.createObjectURL(file)}
+          alt={file.name}
+          fill
+          className="object-cover"
+        />
       </div>
-      <div className="flex items-center gap-2">
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <p className="truncate text-sm text-muted-foreground" title={file.name}>
+          {file.name}
+        </p>
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           size="icon"
-          className="size-7"
+          className="h-6 w-6 shrink-0"
           onClick={onRemove}
         >
-          <CrossIcon className="size-4 " aria-hidden="true" />
+          <X className="h-4 w-4" />
           <span className="sr-only">Remove file</span>
         </Button>
       </div>
+      {typeof progress === 'number' && (
+        <Progress value={progress} className="mt-2" />
+      )}
     </div>
   );
 }

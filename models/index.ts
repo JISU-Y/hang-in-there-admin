@@ -153,3 +153,15 @@ export interface UpdateBannerOrderDto {
   bannerId: number;
   orderNum: number;
 }
+
+export interface UpdateEventDto {
+  event_id: number;
+  title: string;
+  event_st: string;
+  event_ed: string;
+  description: string;
+  images: {
+    url: string;
+    sort_order: number;
+  }[];
+}
