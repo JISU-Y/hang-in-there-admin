@@ -23,12 +23,18 @@ interface EventTableProps {
 export default function EventTable({ filters }: EventTableProps) {
   const [columnResizing, setColumnResizing] = useState({});
 
-  const { data: eventList } = useFetchEventListQuery({
-    page: filters.page,
-    size: filters.limit,
-    ...(filters.search && { title: filters.search }),
-    ...(filters.status && { status: filters.status as EventStatusType })
-  });
+  const { data: eventList } = useFetchEventListQuery(
+    {
+      page: Number(filters.page),
+      size: filters.limit,
+      ...(filters.search && { title: filters.search }),
+      ...(filters.status && { status: filters.status as EventStatusType })
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false
+    }
+  );
 
   const {
     searchQuery,

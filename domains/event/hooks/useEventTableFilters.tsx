@@ -8,16 +8,18 @@ export function useEventTableFilters() {
     defaultValue: 1,
     parse: (value: string | null) => (value ? Number(value) : 1)
   });
-  const [searchQuery, setSearchQuery] = useQueryState('search', {
+  const [searchQuery, setSearchQuery] = useQueryState('q', {
     defaultValue: null,
-    parse: (value: string | null) => value
+    parse: (value: string | null) => value,
+    shallow: false
   });
   const [statusFilter, setStatusFilter] = useQueryState('status', {
     defaultValue: null,
     parse: (value: string | null) => {
       if (!value) return null;
       return value;
-    }
+    },
+    shallow: false
   });
 
   const resetFilters = useCallback(() => {
