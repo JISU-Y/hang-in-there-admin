@@ -50,7 +50,7 @@ export default function EventTable({ filters }: EventTableProps) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-4">
         <DataTableSearch
-          searchKey="name"
+          placeholder="이벤트 제목 검색..."
           searchQuery={searchQuery || ''}
           setSearchQuery={setSearchQuery}
           setPage={setPage}

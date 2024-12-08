@@ -6,7 +6,7 @@ import { Options } from 'nuqs';
 import { useTransition } from 'react';
 
 interface DataTableSearchProps<TSearchValue = string> {
-  searchKey: string;
+  placeholder: string;
   searchQuery: TSearchValue | null;
   setSearchQuery: (
     value:
@@ -22,7 +22,7 @@ interface DataTableSearchProps<TSearchValue = string> {
 }
 
 export function DataTableSearch<TSearchValue = string>({
-  searchKey,
+  placeholder,
   searchQuery,
   setSearchQuery,
   setPage
@@ -36,7 +36,7 @@ export function DataTableSearch<TSearchValue = string>({
 
   return (
     <Input
-      placeholder={`Search ${searchKey}...`}
+      placeholder={placeholder}
       value={searchQuery as string}
       onChange={(e) => handleSearch(e.target.value as TSearchValue)}
       className={cn('w-full md:max-w-sm', isLoading && 'animate-pulse')}

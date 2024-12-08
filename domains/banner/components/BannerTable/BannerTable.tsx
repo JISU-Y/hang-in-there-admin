@@ -103,7 +103,7 @@ export default function BannerTable({ filters }: BannerTableProps) {
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-4">
           <DataTableSearch
-            searchKey="name"
+            placeholder="배너 제목 검색..."
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             setPage={setPage}
