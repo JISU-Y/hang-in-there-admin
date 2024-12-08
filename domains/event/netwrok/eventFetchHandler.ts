@@ -3,12 +3,16 @@ import {
   ApiDataResponseType,
   ApiPaginationDataResponseType
 } from '@models/client';
-import { EventDetailType, EventListType } from '@models/index';
+import {
+  EventDetailType,
+  EventListRequestType,
+  EventListType
+} from '@models/index';
 
 const eventApi = new BaseApi('event');
 
 export const getEventList = (
-  params: { page: number; size: number },
+  params: EventListRequestType,
   tokens?: { accessToken?: string; refreshToken?: string }
 ) => {
   return eventApi.get<ApiPaginationDataResponseType<EventListType[]>>('', {

@@ -29,27 +29,30 @@ interface FilterOption {
   icon?: React.ComponentType<{ className?: string }>;
 }
 
-interface FilterBoxProps {
+interface FilterBoxProps<TFilterValue = string> {
   filterKey: string;
   title: string;
   options: FilterOption[];
   setFilterValue: (
-    value: string | ((old: string) => string | null) | null,
-    options?: Options<any> | undefined
+    value:
+      | TFilterValue
+      | ((old: TFilterValue | null) => TFilterValue | null)
+      | null,
+    options?: Options<unknown> | undefined
   ) => Promise<URLSearchParams>;
   filterValue: string;
 }
 
-export function DataTableFilterBox({
+export function DataTableFilterBox<TFilterValue = string>({
   filterKey,
   title,
   options,
   setFilterValue,
   filterValue
-}: FilterBoxProps) {
+}: FilterBoxProps<TFilterValue>) {
   const selectedValuesSet = React.useMemo(() => {
     if (!filterValue) return new Set<string>();
-    const values = filterValue.split('.');
+    const values = filterValue.split(',');
     return new Set(values.filter((value) => value !== ''));
   }, [filterValue]);
 
@@ -60,7 +63,7 @@ export function DataTableFilterBox({
     } else {
       newSet.add(value);
     }
-    setFilterValue(Array.from(newSet).join('.') || null);
+    setFilterValue((Array.from(newSet).join(',') as TFilterValue) || null);
   };
 
   const resetFilter = () => setFilterValue(null);

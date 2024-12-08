@@ -19,12 +19,14 @@ export default function EventListingPage({}: EventListingPageProps) {
   const page = searchParamsCache.get('page');
   const size = searchParamsCache.get('limit');
   const search = searchParamsCache.get('q');
+  const status = searchParamsCache.get('status');
 
   // TODO: memberList에 query 붙으면 사용
   const filters = {
     page,
     limit: size,
-    ...(search && { search })
+    search,
+    status
   };
 
   // TODO: server 요청과 client 요청을 나누어야 할 듯.

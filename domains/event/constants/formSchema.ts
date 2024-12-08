@@ -15,8 +15,12 @@ export const FORM_LIMIT = {
     MAX_FILE_SIZE: MAX_FILE_SIZE_MB * 1000 * 1000
   },
   DESCRIPTION: {
-    MIN: 3,
-    MAX: 20
+    MIN: 10,
+    MAX: 1000
+  },
+  TITLE: {
+    MIN: 2,
+    MAX: 100
   }
 } as const;
 
@@ -33,22 +37,31 @@ export const FORM_ERROR_TEXT = {
 } as const;
 
 export const updateEventFormSchema = object({
-  img: array(
+  title: string()
+    .min(FORM_LIMIT.TITLE.MIN, {
+      message: `제목은 최소 ${FORM_LIMIT.TITLE.MIN}자 이상이어야 합니다.`
+    })
+    .max(FORM_LIMIT.TITLE.MAX, {
+      message: `제목은 최대 ${FORM_LIMIT.TITLE.MAX}자까지 가능합니다.`
+    }),
+  images: array(
     any().refine((file) => file instanceof File, {
-      message: 'Each item must be a File.'
+      message: '올바른 파일 형식이 아닙니다.'
     })
   )
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE_MB * 1000 ** 2,
-      `Max file size is ${MAX_FILE_SIZE_MB}MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    ),
-  description: string().min(10, {
-    message: 'Description must be at least 10 characters.'
-  }),
-  startDate: string(),
-  endDate: string()
+    .min(FORM_LIMIT.IMAGE.MIN_LENGTH, {
+      message: `이미지는 최소 ${FORM_LIMIT.IMAGE.MIN_LENGTH}개 이상이어야 합니다.`
+    })
+    .max(FORM_LIMIT.IMAGE.MAX_LENGTH, {
+      message: `이미지는 최대 ${FORM_LIMIT.IMAGE.MAX_LENGTH}개까지 가능합니다.`
+    }),
+  description: string()
+    .min(FORM_LIMIT.DESCRIPTION.MIN, {
+      message: `설명은 최소 ${FORM_LIMIT.DESCRIPTION.MIN}자 이상이어야 합니다.`
+    })
+    .max(FORM_LIMIT.DESCRIPTION.MAX, {
+      message: `설명은 최대 ${FORM_LIMIT.DESCRIPTION.MAX}자까지 가능합니다.`
+    }),
+  event_st: string(),
+  event_ed: string()
 });

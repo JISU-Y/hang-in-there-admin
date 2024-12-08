@@ -76,7 +76,7 @@ export async function setupInterceptors(instance: AxiosInstance) {
                 rt: refreshToken
               },
               {
-                params: {
+                headers: {
                   Authorization: `Bearer ${accessToken}`
                 }
               }

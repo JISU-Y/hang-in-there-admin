@@ -33,7 +33,7 @@ export default function MemberTable({ filters }: MemberTableProps) {
     <div className="space-y-4 ">
       <div className="flex flex-wrap items-center gap-4">
         <DataTableSearch
-          searchKey="name"
+          placeholder="회원 이름 검색..."
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setPage={setPage}
