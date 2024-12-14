@@ -3,9 +3,35 @@ import { BannerStatusType, StringBooleanType } from './client';
 export type EventStatusType = 'on_going' | 'up_comming' | 'closed';
 export type EventListOrderType = 'view_count' | 'title';
 
+export type CommonCodeType =
+  | 'area_cd'
+  | 'sigungu_cd'
+  | 'category'
+  | 'sub_category'
+  | 'detail_sub_category';
+
+export interface CommonCodeRequestType {
+  type?: CommonCodeType;
+  parent_cd?: number;
+}
+
+export interface CommonCodeResponseType {
+  common_id: number;
+  common_cd: string;
+  name: string;
+  type: string;
+  parent_cd: number;
+  sort_order: number;
+  reg_dt: string;
+  up_dt: string | null;
+  use_yn: StringBooleanType;
+  memo: string;
+}
+
 export interface GetLoginDto {
   id: string;
   pw: string;
+  expires_in?: number;
 }
 
 export interface LoginType {
@@ -105,7 +131,7 @@ export interface EventDetailType {
 export interface GetBannerListRequest {
   page: number;
   size: number;
-  useYn?: StringBooleanType;
+  use_yn?: StringBooleanType;
   status?: BannerStatusType;
 }
 
