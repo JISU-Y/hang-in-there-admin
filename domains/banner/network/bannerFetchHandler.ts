@@ -11,7 +11,7 @@ export const getBannerList = (
   return bannerApi.get<ApiPaginationDataResponseType<BannerType[]>>('', {
     params: {
       ...params,
-      use_yn: params.useYn
+      use_yn: params.use_yn
     },
     headers: {
       ...(tokens?.accessToken && {
