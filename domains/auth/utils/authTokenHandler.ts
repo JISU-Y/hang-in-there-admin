@@ -15,7 +15,8 @@ export const removeAuthData = () => {
 /* 유효 기간: 1시간 */
 
 export function getAccessToken(options?: OptionsType) {
-  return getCookie(COOKIE_KEY.ACCESS_TOKEN, options);
+  const accessToken = getCookie(COOKIE_KEY.ACCESS_TOKEN, options);
+  return decodeURIComponent(accessToken as string);
 }
 
 export function setAccessToken(token: string, options?: OptionsType) {
@@ -32,7 +33,8 @@ export function removeAccessToken() {
 /* 유효 기간: 7일 */
 
 export function getRefreshToken(options?: OptionsType) {
-  return getCookie(COOKIE_KEY.REFRESH_TOKEN, options);
+  const refreshToken = getCookie(COOKIE_KEY.REFRESH_TOKEN, options);
+  return decodeURIComponent(refreshToken as string);
 }
 
 export function setRefreshToken(token: string, options?: OptionsType) {
