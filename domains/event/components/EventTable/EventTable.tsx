@@ -13,7 +13,6 @@ import { EventStatusType } from '@models/index';
 import {
   useFetchAreaCodesQuery,
   useFetchSigunguCodesQuery,
-  useFetchCategoryCodesQuery,
   useFetchSubCategoryCodesQuery
 } from '@domains/common/network/commonQueries';
 
