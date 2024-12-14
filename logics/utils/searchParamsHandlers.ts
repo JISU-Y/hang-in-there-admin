@@ -11,7 +11,7 @@ export const searchParams = {
   q: parseAsString,
   gender: parseAsString,
   categories: parseAsString,
-  useYn: parseAsString,
+  use_yn: parseAsString,
   status: parseAsString
 };
 

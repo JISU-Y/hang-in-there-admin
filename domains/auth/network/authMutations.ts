@@ -10,7 +10,10 @@ export const useCreateMemberLogin = () => {
     mutationFn: async (body: GetLoginDto) => {
       const { data } = await authApi.post<ApiDataResponseType<LoginType>>(
         '/member/login',
-        body
+        {
+          ...body,
+          expires_in: process.env.NODE_ENV === 'development' ? 60 * 60 : 60 * 60
+        }
       );
 
       return data;

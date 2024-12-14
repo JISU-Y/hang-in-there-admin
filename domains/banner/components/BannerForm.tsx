@@ -53,6 +53,17 @@ export default function BannerForm() {
   const form = useForm<CreateBannerFormSchemaType>({
     resolver: zodResolver(createBannerFormSchema),
     defaultValues: async () => {
+      if (isCreatingNewBanner) {
+        return {
+          content: '',
+          link: '',
+          startDate: '',
+          endDate: '',
+          bgImageFile: [],
+          eventImageFile: []
+        };
+      }
+
       const { data: bannerDetail } = await fetchBannerDetail();
       const bgImageFile = [
         await convertURLtoFile(bannerDetail?.bg_image || '')
@@ -213,23 +224,21 @@ export default function BannerForm() {
               )}
             >
               <FormLabel>배너 게시 기간</FormLabel>
-              {form.getValues('startDate') && form.getValues('endDate') && (
-                <CalendarDateRangePicker
-                  selectedDate={{
-                    from: parse(
-                      form.getValues('startDate'),
-                      'yyyy-MM-dd',
-                      new Date()
-                    ),
-                    to: parse(
-                      form.getValues('endDate'),
-                      'yyyy-MM-dd',
-                      new Date()
-                    )
-                  }}
-                  onSelectDate={handleSelectDate}
-                />
-              )}
+              <CalendarDateRangePicker
+                selectedDate={{
+                  from: form.getValues('startDate')
+                    ? parse(
+                        form.getValues('startDate'),
+                        'yyyy-MM-dd',
+                        new Date()
+                      )
+                    : undefined,
+                  to: form.getValues('endDate')
+                    ? parse(form.getValues('endDate'), 'yyyy-MM-dd', new Date())
+                    : undefined
+                }}
+                onSelectDate={handleSelectDate}
+              />
             </div>
             <Button type="submit" disabled={!form.formState.isValid}>
               배너 {isCreatingNewBanner ? '추가' : '수정'}하기

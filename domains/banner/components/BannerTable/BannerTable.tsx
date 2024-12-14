@@ -40,6 +40,11 @@ export default function BannerTable({ filters }: BannerTableProps) {
   } = useBannerTableFilters();
 
   const { data: bannerList } = useFetchBannerListQuery(filters);
+  const { data: activeBanners } = useFetchBannerListQuery({
+    ...filters,
+    use_yn: 'Y',
+    status: 'ACTIVE'
+  });
   const { mutateAsync: updateBannerUsage } = useUpdateBannerUsageMutation();
   const { mutateAsync: updateBannerOrder } = useUpdateBannerOrderMutation();
 
@@ -81,10 +86,6 @@ export default function BannerTable({ filters }: BannerTableProps) {
     });
   }, [bannerList?.data]);
 
-  const activeBanners = useMemo(() => {
-    return sortedData.filter((banner) => banner.use_yn === 'Y');
-  }, [sortedData]);
-
   const columns = useMemo(
     () => createColumns({ onUpdateBannerUsage: handleUpdateBannerUsage }),
     [handleUpdateBannerUsage]
@@ -94,10 +95,12 @@ export default function BannerTable({ filters }: BannerTableProps) {
     <div className="space-y-8">
       <div className="rounded-lg border bg-card p-4">
         <h3 className="mb-4 text-lg font-semibold">활성 배너 순서 관리</h3>
-        <BannerOrderManager
-          banners={activeBanners}
-          onOrderUpdate={handleUpdateBannerOrders}
-        />
+        {activeBanners && (
+          <BannerOrderManager
+            banners={activeBanners.data}
+            onOrderUpdate={handleUpdateBannerOrders}
+          />
+        )}
       </div>
 
       <div className="space-y-4">

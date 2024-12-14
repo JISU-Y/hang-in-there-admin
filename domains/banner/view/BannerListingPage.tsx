@@ -20,13 +20,13 @@ export default async function BannerListingPage() {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
   const pageLimit = searchParamsCache.get('limit');
-  const useYn = searchParamsCache.get('useYn') as StringBooleanType;
+  const useYn = searchParamsCache.get('use_yn') as StringBooleanType;
   const status = searchParamsCache.get('status') as BannerStatusType;
 
   const filters = {
     page,
     size: pageLimit,
-    ...(useYn && { useYn }),
+    ...(useYn && { use_yn: useYn }),
     ...(status && { status })
   };
 
