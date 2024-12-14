@@ -7,8 +7,19 @@ import { CellAction } from '../components/EventTable/CellAction';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { ImageIcon } from '@radix-ui/react-icons';
+import { CommonCodeResponseType } from '@models/index';
 
-export const columns: ColumnDef<EventListType>[] = [
+interface TableColumnsProps {
+  areaCodes: CommonCodeResponseType[];
+  sigunguCodes: CommonCodeResponseType[];
+  subCategories: CommonCodeResponseType[];
+}
+
+export const columns = ({
+  areaCodes,
+  sigunguCodes,
+  subCategories
+}: TableColumnsProps): ColumnDef<EventListType>[] => [
   {
     id: 'select',
     size: 50,
@@ -80,13 +91,6 @@ export const columns: ColumnDef<EventListType>[] = [
     maxSize: 400
   },
   {
-    accessorKey: 'content_type',
-    header: '이벤트 타입',
-    size: 120,
-    minSize: 100,
-    maxSize: 200
-  },
-  {
     accessorKey: 'event_period',
     header: '이벤트 기간',
     size: 200,
@@ -105,9 +109,12 @@ export const columns: ColumnDef<EventListType>[] = [
     minSize: 150,
     maxSize: 300,
     cell: ({ row }) => {
-      const mainCategory = row.original.category;
-      const subCategory = row.original.sub_category;
-      return `${mainCategory} > ${subCategory}`;
+      const subCategoryName =
+        subCategories.find(
+          ({ common_id }) => common_id === row.original.sub_category
+        )?.name || row.original.sub_category;
+
+      return subCategoryName;
     }
   },
   {
@@ -117,9 +124,16 @@ export const columns: ColumnDef<EventListType>[] = [
     minSize: 150,
     maxSize: 250,
     cell: ({ row }) => {
-      const areaCode = row.original.area_cd;
-      const sigunguCode = row.original.sigungu_cd;
-      return `${areaCode} > ${sigunguCode}`;
+      const areaName =
+        areaCodes.find(({ common_id }) => common_id === row.original.area_cd)
+          ?.name || row.original.area_cd;
+
+      const sigunguName =
+        sigunguCodes.find(
+          ({ common_id }) => common_id === row.original.sigungu_cd
+        )?.name || row.original.sigungu_cd;
+
+      return `${areaName} > ${sigunguName}`;
     }
   },
   {

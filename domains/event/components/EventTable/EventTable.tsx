@@ -6,10 +6,16 @@ import { DataTableSearch } from '@domains/common/components/ui/table/data-table-
 import { columns } from '../../constants/tableColumns';
 import { useEventTableFilters } from '../../hooks/useEventTableFilters';
 import { useFetchEventListQuery } from '@domains/event/netwrok/eventQueries';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { DataTableFilterBox } from '@domains/common/components/ui/table/data-table-filter-box';
 import { STATUS_OPTIONS } from '@domains/event/constants/statusOptions';
 import { EventStatusType } from '@models/index';
+import {
+  useFetchAreaCodesQuery,
+  useFetchSigunguCodesQuery,
+  useFetchCategoryCodesQuery,
+  useFetchSubCategoryCodesQuery
+} from '@domains/common/network/commonQueries';
 
 interface EventTableProps {
   filters: {
@@ -36,6 +42,10 @@ export default function EventTable({ filters }: EventTableProps) {
     }
   );
 
+  const { data: areaCodes } = useFetchAreaCodesQuery();
+  const { data: sigunguCodes } = useFetchSigunguCodesQuery();
+  const { data: subCategories } = useFetchSubCategoryCodesQuery();
+
   const {
     searchQuery,
     statusFilter,
@@ -45,6 +55,16 @@ export default function EventTable({ filters }: EventTableProps) {
     isAnyFilterActive,
     resetFilters
   } = useEventTableFilters();
+
+  const tableColumns = useMemo(
+    () =>
+      columns({
+        areaCodes: areaCodes || [],
+        sigunguCodes: sigunguCodes || [],
+        subCategories: subCategories || []
+      }),
+    [areaCodes, sigunguCodes, subCategories]
+  );
 
   return (
     <div className="space-y-4">
@@ -69,7 +89,7 @@ export default function EventTable({ filters }: EventTableProps) {
       </div>
       <div className="relative">
         <DataTable
-          columns={columns}
+          columns={tableColumns}
           data={eventList?.data || []}
           totalItems={eventList?.pagination.totalPage || 0}
           enableColumnResizing
